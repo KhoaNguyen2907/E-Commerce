@@ -3,12 +3,16 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
+    url: jdbc:postgresql://localhost:5431/postgres
     username: postgres
     password: 1234
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     show-sql: true
     generate-ddl: true
+
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
