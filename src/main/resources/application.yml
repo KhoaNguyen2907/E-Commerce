@@ -12,6 +12,9 @@ spring:
       ddl-auto: create
     show-sql: true
     generate-ddl: true
+    properties:
+      hibernate:
+        format_sql: true
 
   mvc:
     pathmatch:

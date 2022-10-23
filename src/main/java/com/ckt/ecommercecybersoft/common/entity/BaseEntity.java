@@ -2,6 +2,7 @@ package com.ckt.ecommercecybersoft.common.entity;
 
 import com.ckt.ecommercecybersoft.common.utils.DateTimeUtils;
 import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,16 +17,18 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.format.annotation.DateTimeFormat;
-
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
-
-@Data
+@MappedSuperclass
+@Setter
+@Getter
 @NoArgsConstructor
 @SuperBuilder
-@MappedSuperclass
 public class BaseEntity implements Serializable {
     @Id
     @Type(type = "uuid-char")

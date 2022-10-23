@@ -5,6 +5,7 @@ import com.ckt.ecommercecybersoft.common.utils.ProjectMapper;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -39,9 +40,9 @@ public interface GenericService<T extends BaseEntity, D, I> {
         return getRepository().findById(id);
     }
 
-    default T save(T entity) {
-        return getRepository().save(entity);
-
+    default D saveOrUpdate(D dto, Class<T> clazz) {
+        T entity = getRepository().save(getMapper().map(dto, clazz));
+        return getMapper().map(entity, (Type) dto.getClass());
     }
 
     default void deleteById(I id) {

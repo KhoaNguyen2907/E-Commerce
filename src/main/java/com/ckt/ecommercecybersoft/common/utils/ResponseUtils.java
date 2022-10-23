@@ -14,6 +14,17 @@ import java.util.stream.Collectors;
 
 public class ResponseUtils {
 
+    public static ResponseEntity<ResponseDTO> get (Object data, HttpStatus status) {
+        ResponseDTO response = ResponseDTO.builder()
+                .content(data)
+                .hasErrors(false)
+                .errors(null)
+                .timestamp(DateTimeUtils.now())
+                .status(status.value())
+                .build();
+        return new ResponseEntity<>(response, status);
+    }
+
     public static ResponseEntity<ResponseDTO> error(ConstraintViolationException exception, HttpStatus status) {
 
         List<String> errors = exception.getConstraintViolations().stream()
@@ -39,11 +50,5 @@ public class ResponseUtils {
         return new ResponseEntity<>(response, status);
     }
 
-    public static ResponseEntity<ResponseDTO> error(RuntimeException exception, HttpStatus status) {
-        String error = "Something went wrong. That's all we know.";
-        ResponseDTO response = ResponseDTO.builder().content(null).hasErrors(true).errors(List.of(error))
-                .timestamp(DateTimeUtils.now()).status(status.value()).build();
-        return new ResponseEntity<>(response, status);
-    }
 
 }
