@@ -1,4 +1,4 @@
-package com.ckt.ecommercecybersoft.product.model;
+package com.ckt.ecommercecybersoft.product.util;
 
 public class ProductCategoryUtil {
     public class ProductCategory {
