@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
@@ -21,13 +23,18 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequestModel user) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequestModel user) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwtToken = JwtUtils.generateToken(authentication);
+
         User userDetail = (User) authentication.getPrincipal();
 
-        return ResponseEntity.ok().header("Authorization", jwtToken).body(userDetail.getUsername());
+        String jwtSubject = userDetail.getUsername();
+        String jwtToken = JwtUtils.generateLoginToken(jwtSubject);
+
+        return ResponseEntity.ok().header("Authorization", jwtToken)
+                .body(userDetail.getUsername());
     }
 }

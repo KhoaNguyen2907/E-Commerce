@@ -2,49 +2,52 @@ package com.ckt.ecommercecybersoft.user.model;
 
 import com.ckt.ecommercecybersoft.common.entity.BaseEntity;
 import com.ckt.ecommercecybersoft.role.model.Role;
+import com.ckt.ecommercecybersoft.user.utils.UserExceptionUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "users")
+@Table(name = UserEntity.TABLE_NAME)
 public class User extends BaseEntity {
-    @Column(name = "username",unique = true, nullable = false)
-    @Length(min = 5, max = 50, message = "Username must have length between {min} and {max} characters")
+    @Column(name = UserEntity.USERNAME,unique = true, nullable = false)
+    @Length(min = 5, max = 50, message = UserExceptionUtils.USERNAME_LENGTH)
+    @NotBlank(message = UserExceptionUtils.USERNAME_NOT_BLANK)
     private String username;
 
-    @Length(min = 5, max = 200, message = "Password must have length between {min} and {max} characters")
-    @Column(name = "password")
+    @Length(min = 5, max = 200, message = UserExceptionUtils.PASSWORD_LENGTH)
+    @Column(name = UserEntity.PASSWORD, nullable = false)
+    @NotBlank(message = UserExceptionUtils.PASSWORD_NOT_BLANK)
     private String password;
 
-    @Column(name = "email", unique = true, nullable = false)
-    @Email(message = "Email is not valid")
-    @NotNull
+    @Column(name = UserEntity.EMAIL, unique = true, nullable = false)
+    @Email(message = UserExceptionUtils.EMAIL_INVALID)
+    @NotBlank (message = UserExceptionUtils.EMAIL_NOT_BLANK)
     private String email;
 
-    @Column(name = "name")
+    @Column(name = UserEntity.NAME)
+    @NotBlank (message = UserExceptionUtils.NAME_NOT_BLANK)
     private String name;
 
-    @Column(name = "avatar")
+    @Column(name = UserEntity.AVATAR)
     private String avatar;
 
-    @Column(name = "status")
+    @Column(name = UserEntity.STATUS)
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    private String emailValidationToken;
-//
-//    @Column(name ="email_validated" )
-//    private boolean emailValidationStatus;
+    @Column(name =UserEntity.EMAIL_VERIFIED)
+    private boolean emailVerified = false;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "role_id")
+    @JoinColumn(name = UserEntity.ROLE_ID)
     private Role role;
 
     @Override

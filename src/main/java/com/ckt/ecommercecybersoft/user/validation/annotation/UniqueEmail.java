@@ -1,5 +1,6 @@
 package com.ckt.ecommercecybersoft.user.validation.annotation;
 
+import com.ckt.ecommercecybersoft.user.utils.UserExceptionUtils;
 import com.ckt.ecommercecybersoft.user.validation.validator.UniqueEmailValidator;
 
 import javax.validation.Constraint;
@@ -12,7 +13,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 @Constraint(validatedBy = UniqueEmailValidator.class)
 public @interface UniqueEmail {
-    String message() default "Email already exists";
+    String message() default UserExceptionUtils.EMAIL_ALREADY_EXISTS;
     Class[] groups() default {};
     Class[] payload() default {};
 }

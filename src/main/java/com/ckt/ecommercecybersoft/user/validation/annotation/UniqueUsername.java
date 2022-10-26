@@ -1,5 +1,6 @@
 package com.ckt.ecommercecybersoft.user.validation.annotation;
 
+import com.ckt.ecommercecybersoft.user.utils.UserExceptionUtils;
 import com.ckt.ecommercecybersoft.user.validation.validator.UniqueUsernameValidator;
 
 import javax.validation.Constraint;
@@ -12,7 +13,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = UniqueUsernameValidator.class)
 public @interface UniqueUsername {
-    String message() default "Username already exists";
+    String message() default UserExceptionUtils.USERNAME_ALREADY_EXISTS;
     Class[] groups() default {};
     Class[] payload() default {};
 }

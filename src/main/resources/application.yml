@@ -9,12 +9,24 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     show-sql: true
     generate-ddl: true
     properties:
       hibernate:
         format_sql: true
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: khoa.nguyen.ldo@gmail.com
+    password: oifqtxijngaaaoxy
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
   mvc:
     pathmatch:
