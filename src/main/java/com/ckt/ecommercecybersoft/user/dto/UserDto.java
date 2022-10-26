@@ -1,10 +1,8 @@
 package com.ckt.ecommercecybersoft.user.dto;
 
 import com.ckt.ecommercecybersoft.role.dto.RoleDto;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -12,6 +10,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class UserDto implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -33,6 +32,6 @@ public class UserDto implements Serializable {
 
     private String emailVerificationToken;
 
-    private boolean emailVerificationSatus = false;
+    private boolean emailVerified;
 
 }

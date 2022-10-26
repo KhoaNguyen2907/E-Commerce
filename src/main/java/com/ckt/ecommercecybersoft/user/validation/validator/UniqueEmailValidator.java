@@ -1,11 +1,13 @@
 package com.ckt.ecommercecybersoft.user.validation.validator;
 
+import com.ckt.ecommercecybersoft.user.model.User;
 import com.ckt.ecommercecybersoft.user.validation.annotation.UniqueEmail;
 import com.ckt.ecommercecybersoft.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+import java.util.Optional;
 
 public class UniqueEmailValidator implements ConstraintValidator<UniqueEmail, String> {
     @Autowired
@@ -20,7 +22,11 @@ public class UniqueEmailValidator implements ConstraintValidator<UniqueEmail, St
 
     @Override
     public boolean isValid(String email, ConstraintValidatorContext constraintValidatorContext) {
-        if (userRepository.findByEmail(email).isEmpty()) {
+        Optional<User> user = userRepository.findByEmail(email);
+        if (user.isEmpty()) {
+            return true;
+        }
+        if (!user.get().isEmailVerified()) {
             return true;
         }
         constraintValidatorContext.buildConstraintViolationWithTemplate(message)

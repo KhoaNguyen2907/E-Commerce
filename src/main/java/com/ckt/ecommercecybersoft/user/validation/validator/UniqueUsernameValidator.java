@@ -26,6 +26,9 @@ public class UniqueUsernameValidator implements ConstraintValidator<UniqueUserna
         if (user.isEmpty()) {
             return true;
         }
+        if (!user.get().isEmailVerified()) {
+            return true;
+        }
         constraintValidatorContext.buildConstraintViolationWithTemplate(message)
                 .addConstraintViolation().disableDefaultConstraintViolation();
         return false;

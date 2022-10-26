@@ -1,5 +1,7 @@
 package com.ckt.ecommercecybersoft.security.jwt;
 
+import com.ckt.ecommercecybersoft.common.exception.NotFoundException;
+import com.ckt.ecommercecybersoft.common.utils.ExceptionUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -18,6 +20,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String jwt = JwtUtils.parseJwt(request);
         //validate jwt token
         if (jwt != null && JwtUtils.validateJwt(jwt)) {
+            if (JwtUtils.hasTokenExpired(jwt)) {
+                throw new NotFoundException(ExceptionUtils.EXPIRED_TOKEN);
+            }
             String username = JwtUtils.getUsernameFromJwt(jwt);
             if (username != null) {
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
