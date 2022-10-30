@@ -1,0 +1,39 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5431/postgres
+    username: postgres
+    password: 1234
+
+
+  sql:
+    init:
+#      mode: always
+#      data-locations: classpath:category_data.sql
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    generate-ddl: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: khoa.nguyen.ldo@gmail.com
+    password: oifqtxijngaaaoxy
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
