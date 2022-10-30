@@ -19,7 +19,7 @@ public class ProductDTO {
     @NotEmpty(message = "{product.title.not.empty}")
     private String title;
     @Min(value = 0, message = "{product.price.min}")
-    private double price;
+    private long price;
     private String description;
     private String thumbnailUrl;
     @Min(value = 0, message = "{product.stock.min}")

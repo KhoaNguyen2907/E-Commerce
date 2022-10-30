@@ -3,6 +3,7 @@ package com.ckt.ecommercecybersoft.product.model;
 import com.ckt.ecommercecybersoft.brand.model.BrandEntity;
 import com.ckt.ecommercecybersoft.category.model.CategoryEntity;
 import com.ckt.ecommercecybersoft.common.entity.BaseEntity;
+import com.ckt.ecommercecybersoft.order.model.OrderItem;
 import com.ckt.ecommercecybersoft.product.model.ProductCategoryEntity;
 import com.ckt.ecommercecybersoft.product.util.ProductUtil;
 import lombok.*;
@@ -27,7 +28,7 @@ public class ProductEntity extends BaseEntity {
 //    @UniqueElements(message = "Title of product duplicated")
     private String title;
     @Column(name = ProductUtil.Product.PRICE)
-    private double price;
+    private long price;
     @Column(name = ProductUtil.Product.DESCRIPTION)
     private String description;
     @Column(name = ProductUtil.Product.THUMBNAIL, length = 1024)
@@ -37,9 +38,12 @@ public class ProductEntity extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = ProductUtil.Product.BRAND_ID)
     private BrandEntity brand;
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL,
+            orphanRemoval = true)
     private Set<ProductCategoryEntity> productCategoryEntities = new HashSet<>();
-
+    @OneToMany(mappedBy = "productEntity", cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    private Set<OrderItem> orderItems = new HashSet<>();
     public ProductEntity addBrand(BrandEntity brandEntity){
         this.setBrand(brandEntity);
         brandEntity.getProductEntities().add(this);
