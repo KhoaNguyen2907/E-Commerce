@@ -1,9 +1,7 @@
 package com.ckt.ecommercecybersoft.common.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 import java.util.List;
 
 @Getter
@@ -13,8 +11,8 @@ import java.util.List;
 public class ResponseDTO {
     private Object content;
     private boolean hasErrors;
-    private List<String> errors;
+    private List<Error> errors;
     private String timestamp;
+    private boolean isContentArray;
     private int status;
-
 }
