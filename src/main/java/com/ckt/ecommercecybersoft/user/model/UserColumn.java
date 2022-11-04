@@ -3,7 +3,7 @@ package com.ckt.ecommercecybersoft.user.model;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
-public class UserEntity {
+public class UserColumn {
     public static final String TABLE_NAME = "users";
     public static final String ID = "id";
     public static final String USERNAME = "username";

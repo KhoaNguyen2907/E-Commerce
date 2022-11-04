@@ -16,11 +16,10 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -29,6 +28,7 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor
 @SuperBuilder
+@EntityListeners(AuditingEntityListener.class)
 public class BaseEntity implements Serializable {
     @Id
     @Type(type = "uuid-char")
@@ -37,13 +37,13 @@ public class BaseEntity implements Serializable {
     protected UUID id;
 
     @CreatedBy
-    @Column(name = Columns.CREATED_BY)
+    @Column(name = Columns.CREATED_BY, updatable = false)
     protected String createdBy;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateTimeUtils.DATE_TIME_FORMAT)
     @DateTimeFormat(pattern = DateTimeUtils.DATE_TIME_FORMAT)
     @CreatedDate
-    @Column(name = Columns.CREATED_AT)
+    @Column(name = Columns.CREATED_AT, nullable = false, updatable = false)
     protected LocalDateTime createdAt;
 
     @LastModifiedBy

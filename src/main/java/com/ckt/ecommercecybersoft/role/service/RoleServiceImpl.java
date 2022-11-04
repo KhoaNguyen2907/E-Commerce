@@ -1,6 +1,7 @@
 package com.ckt.ecommercecybersoft.role.service;
 
 import com.ckt.ecommercecybersoft.common.utils.ProjectMapper;
+import com.ckt.ecommercecybersoft.role.dto.RoleDto;
 import com.ckt.ecommercecybersoft.role.model.Role;
 import com.ckt.ecommercecybersoft.role.repository.RoleRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -29,4 +30,5 @@ public class RoleServiceImpl implements RoleService {
     public ProjectMapper getMapper() {
         return mapper;
     }
+
 }

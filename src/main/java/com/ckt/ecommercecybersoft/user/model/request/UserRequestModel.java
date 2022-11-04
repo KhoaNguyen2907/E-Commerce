@@ -40,7 +40,5 @@ public class UserRequestModel {
 
     private String avatar;
 
-    private RoleDto role;
-
 
 }

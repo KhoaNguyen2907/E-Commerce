@@ -1,0 +1,7 @@
+Hãy thêm các api cần được phân quyền vào file Authorization.
+
+Khi set message cho exception, hãy kèm error code vào trước message, code phải có 3 chữ số.
+Ví dụ: "006 Username already exists"
+Hãy thêm code vào file "ErrorCode" của thư mục note.
+
+Nếu có thay đổi, hãy update lại file này

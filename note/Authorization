@@ -1,0 +1,18 @@
+AUTHORIZATION
+
+Authentication required:
+    updateUser
+
+
+Admin Only:
+    getAllRoles
+    createRole
+
+    getAllUsers
+    getUserById
+    deleteUser
+    changeRole
+
+
+
+

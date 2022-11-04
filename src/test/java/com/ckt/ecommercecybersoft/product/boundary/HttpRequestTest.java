@@ -1,7 +1,6 @@
 package com.ckt.ecommercecybersoft.product.boundary;
 
 import com.ckt.ecommercecybersoft.product.util.UrlUtil;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

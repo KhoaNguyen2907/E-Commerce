@@ -13,8 +13,9 @@ import java.util.List;
 public class ResponseDTO {
     private Object content;
     private boolean hasErrors;
-    private List<String> errors;
-    private String timestamp;
+    private List<Error> errors;
+    private long timestamp;
+    private boolean isContentArray;
     private int status;
 
 }

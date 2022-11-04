@@ -1,6 +1,7 @@
 package com.ckt.ecommercecybersoft.common.service;
 
 import com.ckt.ecommercecybersoft.common.entity.BaseEntity;
+import com.ckt.ecommercecybersoft.common.exception.NotFoundException;
 import com.ckt.ecommercecybersoft.common.utils.ProjectMapper;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,7 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 public interface GenericService<T extends BaseEntity, D, I> {
@@ -40,12 +40,14 @@ public interface GenericService<T extends BaseEntity, D, I> {
         return getRepository().findById(id);
     }
 
-    default D saveOrUpdate(D dto, Class<T> clazz) {
-        T entity = getRepository().save(getMapper().map(dto, clazz));
-        return getMapper().map(entity, (Type) dto.getClass());
+    default D save(D dto, Class<T> clazz) {
+        T entity = getMapper().map(dto, clazz);
+        T savedEntity = getRepository().save(entity);
+        return getMapper().map(savedEntity, (Type) dto.getClass());
     }
 
     default void deleteById(I id) {
+        getRepository().findById(id).orElseThrow(() -> new NotFoundException("Data Not Found"));
         getRepository().deleteById(id);
     }
 
