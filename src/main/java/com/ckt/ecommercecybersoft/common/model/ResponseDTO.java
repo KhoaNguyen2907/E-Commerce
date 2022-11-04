@@ -1,9 +1,7 @@
 package com.ckt.ecommercecybersoft.common.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 import java.util.List;
 
 @Getter
@@ -17,5 +15,4 @@ public class ResponseDTO {
     private long timestamp;
     private boolean isContentArray;
     private int status;
-
 }

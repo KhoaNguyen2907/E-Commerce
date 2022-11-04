@@ -4,6 +4,7 @@ import com.ckt.ecommercecybersoft.common.exception.ForbiddenException;
 import com.ckt.ecommercecybersoft.common.exception.NotFoundException;
 import com.ckt.ecommercecybersoft.common.model.Error;
 import com.ckt.ecommercecybersoft.common.model.ResponseDTO;
+import com.ckt.ecommercecybersoft.common.model.Error;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -25,7 +26,6 @@ import java.util.stream.Collectors;
  * @author KhoaNguyen
  * @version 1.0
  * @since 2022-10-27
- *
  */
 @UtilityClass
 public class ResponseUtils {
@@ -45,6 +45,7 @@ public class ResponseUtils {
 
     public static ResponseEntity<ResponseDTO> errorConstraint(ConstraintViolationException exception, HttpStatus status) {
 
+
         List<String> errors = exception.getConstraintViolations().stream()
                 .map(ConstraintViolation::getMessage).collect(Collectors.toList());
         List<Error> errorList = getErrorList(errors);
@@ -57,6 +58,7 @@ public class ResponseUtils {
                 .map(e -> e.getDefaultMessage()).collect(Collectors.toList());
         List<Error> errorList = getErrorList(errors);
         ResponseDTO response = getResponseDto(null, status, errorList);
+
         return new ResponseEntity<>(response, status);
     }
 
@@ -64,6 +66,7 @@ public class ResponseUtils {
         String error = exception.getMessage();
         List<Error> errorList = getErrorList(List.of(error));
         ResponseDTO response = getResponseDto(null, status, errorList);
+
         return new ResponseEntity<>(response, status);
     }
 
@@ -84,6 +87,7 @@ public class ResponseUtils {
     //When user login with wrong username, it will throw AuthenticationException instead of NotFoundException.
     public static ResponseEntity<ResponseDTO> errorUnauthorized(AuthenticationException exception, HttpStatus status) {
         String error = exception.getMessage();
+
         String message = "Please login";
         int errorCode = 001;
         if (error.startsWith("00")){
@@ -99,6 +103,7 @@ public class ResponseUtils {
         String message = "Don't have permission to access this resource";
         List<Error> errorList = List.of(new Error(002,message));
         ResponseDTO response = getResponseDto(null, status, errorList);
+
         return new ResponseEntity<>(response, status);
     }
 

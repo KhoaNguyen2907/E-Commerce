@@ -1,0 +1,2 @@
+insert into category (id, created_at, created_by, last_modified_at, last_modified_by, title) values ('8bf20eb6-8070-4578-8886-19fba035c408', '12/3/2021', 'Clarine Mollitt', '11/24/2021', 'Bren Escolme', 'Doors, Frames & Hardware');
+insert into category (id, created_at, created_by, last_modified_at, last_modified_by, title) values ('255077fe-7641-4924-b6fc-061b524f1ead', '11/3/2021', 'Randi Boc', '2/28/2022', 'Marv Ottley', 'HVAC');

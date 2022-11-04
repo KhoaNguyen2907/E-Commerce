@@ -4,6 +4,7 @@ import com.ckt.ecommercecybersoft.brand.repository.BrandRepository;
 import com.ckt.ecommercecybersoft.product.repository.ProductRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
