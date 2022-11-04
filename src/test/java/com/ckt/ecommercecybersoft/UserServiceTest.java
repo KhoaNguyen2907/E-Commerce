@@ -20,8 +20,4 @@ import java.util.UUID;
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
 
-
-
-
-
 }

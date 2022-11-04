@@ -2,11 +2,12 @@ package com.ckt.ecommercecybersoft;
 
 import com.ckt.ecommercecybersoft.brand.repository.BrandRepository;
 import com.ckt.ecommercecybersoft.product.repository.ProductRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 import java.util.UUID;
 
@@ -16,7 +17,6 @@ class EcommerceCybersoftApplicationTests {
     private BrandRepository brandRepository;
     @Autowired
     private ProductRepository productRepository;
-
 
 
     @Test
@@ -31,6 +31,7 @@ class EcommerceCybersoftApplicationTests {
     public void getAllProductDTO() {
         Assertions.assertEquals(13, productRepository.findAll().size());
     }
+
     @Test
     void contextLoads() {
     }

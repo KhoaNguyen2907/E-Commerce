@@ -1,12 +1,14 @@
 package com.ckt.ecommercecybersoft.common.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
-@NoArgsConstructor
+@Getter
+@Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class Error {
     private int errorCode;
     private String errorMessage;

@@ -1,6 +1,7 @@
 package com.ckt.ecommercecybersoft.user.dto;
 
 import com.ckt.ecommercecybersoft.role.dto.RoleDto;
+import com.ckt.ecommercecybersoft.user.model.User;
 import lombok.*;
 
 import java.io.Serializable;
@@ -28,10 +29,11 @@ public class UserDto implements Serializable {
 
     private RoleDto role;
 
-    private String status;
+    private User.Status status;
 
     private String emailVerificationToken;
 
     private boolean emailVerified;
+
 
 }

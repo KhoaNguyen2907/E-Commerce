@@ -15,18 +15,18 @@ public class JwtUtils {
     public final long LOGIN_EXPIRED_TIME = 86400000; // 10 day
     public final long EMAIL_TOKEN_EXPIRED_TIME = 8640000; // 1 day
 
-    public String generateLoginToken(String subject) {
+    public String generateLoginToken(String username) {
         return Jwts.builder()
-                .setSubject(subject)
+                .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + LOGIN_EXPIRED_TIME ))
                 .signWith(Keys.hmacShaKeyFor(SECRET_KEY.getBytes()), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    public String generateEmailToken(String subject) {
+    public String generateEmailToken(String username) {
         return Jwts.builder()
-                .setSubject(subject)
+                .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EMAIL_TOKEN_EXPIRED_TIME ))
                 .signWith(Keys.hmacShaKeyFor(SECRET_KEY.getBytes()), SignatureAlgorithm.HS256)

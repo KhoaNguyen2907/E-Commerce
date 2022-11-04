@@ -1,14 +1,5 @@
 package com.ckt.ecommercecybersoft.product.boundary;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.ckt.ecommercecybersoft.common.utils.ResponseUtils;
 import com.ckt.ecommercecybersoft.product.dto.ProductDTO;
 import com.ckt.ecommercecybersoft.product.service.ProductService;
@@ -18,11 +9,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -42,6 +31,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 //@RunWith(SpringRunner.class)
 //@WebMvcTest(ProductResource.class)
 //@RunWith(SpringRunner.class)
@@ -53,11 +47,13 @@ public class ProductResourceTest {
     private MockMvc mockMvc;
     @MockBean
     private ProductService productService;
+
     @Test
     @WithMockUser("john")
     public void shouldReturnDefaultMessage() throws Exception {
         this.mockMvc.perform(get(UrlUtil.URL_PRODUCT)).andDo(print()).andExpect(status().isOk());
     }
+
     @Test
     @WithMockUser("john")
     public void getAllProductDto() throws Exception {

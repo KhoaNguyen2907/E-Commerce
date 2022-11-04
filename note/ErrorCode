@@ -1,0 +1,20 @@
+ERROR CODE DESCRIPTION
+
+001: Please login
+002: Don't have permission
+003: User not active
+004: Wrong password
+
+005: User not found
+006: Username already exists
+007: Email already exists"
+008: Username must be between {min} and {max} characters
+009: Password must be between {min} and {max} characters
+010: Email is not valid
+011: Email is not blank
+012: Name is not blank
+013: Name is not blank
+014: Password is not blank
+
+015: This session has expired. Please request a new one
+

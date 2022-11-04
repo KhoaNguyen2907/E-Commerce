@@ -18,11 +18,12 @@ public class UserDetailServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserDto user = userService.findByUsername(username);
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found");
-        }
 //        return new User(user.getUsername(), user.getPassword(), new ArrayList<>());
-        return new User(user.getUsername(), user.getPassword(),user.isEmailVerified(),
+        boolean isActive = false;
+        if (user.isEmailVerified() && user.getStatus().toString().equals("ACTIVE")) {
+            isActive = true;
+        }
+        return new User(user.getUsername(), user.getPassword(), isActive,
                 true, true, true,
                 new ArrayList<>());
     }

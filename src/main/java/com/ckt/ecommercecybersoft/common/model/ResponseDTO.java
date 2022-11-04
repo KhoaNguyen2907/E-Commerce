@@ -12,7 +12,7 @@ public class ResponseDTO {
     private Object content;
     private boolean hasErrors;
     private List<Error> errors;
-    private String timestamp;
+    private long timestamp;
     private boolean isContentArray;
     private int status;
 }

@@ -1,8 +1,9 @@
 package com.ckt.ecommercecybersoft.common.exception;
 
-public class NotFoundException extends RuntimeException {
+public class ForbiddenException extends RuntimeException{
     private static final long serialVersionUID = 1L;
-    public NotFoundException(String message) {
+
+    public ForbiddenException(String message) {
         super(message);
     }
 }

@@ -51,7 +51,7 @@ public class WebSecurityConfig {
         http.csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/api/v1/auth/**").permitAll()
-                .antMatchers(HttpMethod.POST,"/api/v1/users").permitAll()
+                .antMatchers("/api/v1/users").authenticated()
                 .antMatchers("/swagger-ui/**").permitAll()
                 .anyRequest().permitAll()
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
