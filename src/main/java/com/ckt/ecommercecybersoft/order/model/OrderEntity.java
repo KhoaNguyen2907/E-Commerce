@@ -24,7 +24,7 @@ public class OrderEntity extends BaseEntity {
 //    private String name;
     @Column(name = OrderConstant.Order.COMMENT)
     private String comment;
-    @Column(name = OrderConstant.Order.STATUS, columnDefinition = "PENDING")
+    @Column(name = OrderConstant.Order.STATUS)
     @Enumerated(EnumType.STRING)
     private Status status = Status.PENDING;
     @Column(name = OrderConstant.Order.TOTAL_COST)

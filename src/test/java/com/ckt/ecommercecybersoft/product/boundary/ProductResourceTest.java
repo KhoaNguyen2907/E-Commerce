@@ -92,7 +92,7 @@ public class ProductResourceTest {
         ResponseEntity response = ResponseUtils.get(productDTO, HttpStatus.CREATED);
         when(productService.createProduct(productDTO)).thenReturn(productDTO);
         RequestBuilder requestBuilder = MockMvcRequestBuilders.post(UrlUtil.URL_PRODUCT)
-                .with(csrf())
+//                .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(productDTO));
         mockMvc.perform(requestBuilder).andDo(print())
