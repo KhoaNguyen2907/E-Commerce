@@ -202,6 +202,7 @@ public class UserServiceImpl implements UserService, Serializable {
                 throw new NotFoundException(ExceptionUtils.EXPIRED_TOKEN);
             }
         }
+
         return null;
     }
 }
