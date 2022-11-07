@@ -13,6 +13,7 @@ import com.ckt.ecommercecybersoft.security.authorization.AdminOnly;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,9 +32,10 @@ public class RoleController {
 
     @AdminOnly
     @GetMapping
+
     public ResponseEntity<ResponseDTO> getAllRoles(@RequestParam(defaultValue = "5") int pageSize, @RequestParam(defaultValue = "1") int pageNumber) {
         logger.info("Get all roles with page size: {} and page number: {} ", pageSize, pageNumber);
-        List<Role> roles = roleService.findAll(Pageable.ofSize(pageSize).withPage(pageNumber-1));
+        List<RoleDto> roles = roleService.findAllDto(Pageable.ofSize(pageSize).withPage(pageNumber-1), RoleDto.class);
         return ResponseUtils.get(roles, HttpStatus.OK);
     }
 

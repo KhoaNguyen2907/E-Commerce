@@ -26,6 +26,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
 import java.util.Arrays;
 import java.util.List;
@@ -92,12 +93,13 @@ public class ProductResourceTest {
         ResponseEntity response = ResponseUtils.get(productDTO, HttpStatus.CREATED);
         when(productService.createProduct(productDTO)).thenReturn(productDTO);
         RequestBuilder requestBuilder = MockMvcRequestBuilders.post(UrlUtil.URL_PRODUCT)
-                .with(csrf())
+//                .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(productDTO));
         mockMvc.perform(requestBuilder).andDo(print())
                 .andExpect(status().isCreated());
     }
+
 
     @Test
     public void updateProduct() {

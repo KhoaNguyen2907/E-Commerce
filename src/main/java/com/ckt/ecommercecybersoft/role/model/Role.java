@@ -17,6 +17,7 @@ import java.util.Set;
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
+@Cacheable
 public class Role extends BaseEntity {
     @Column(name = RoleColumn.NAME, nullable = false)
     private String name;
@@ -27,7 +28,7 @@ public class Role extends BaseEntity {
     @Column(name = RoleColumn.DESCRIPTION)
     private String description;
 
-    @OneToMany(mappedBy = "role")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "role")
     private Set<User> users = new LinkedHashSet<>();
 
     public void addUser(User user) {

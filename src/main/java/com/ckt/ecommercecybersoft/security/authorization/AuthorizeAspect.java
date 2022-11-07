@@ -56,7 +56,7 @@ public class AuthorizeAspect {
     public void checkAdmin() {
         Authentication authentication = this.getAuthentication();
         String username = authentication.getName();
-        logger.info("Curren user: " + username);
+        logger.info("Current user: " + username);
         User user = userRepository.findByUsername(username).orElseThrow(() -> new NotFoundException(UserExceptionUtils.USER_NOT_FOUND));
         if (!user.getRole().getCode().equals("ADMIN")) {
             logger.error("Can not access this resource because you are not admin");

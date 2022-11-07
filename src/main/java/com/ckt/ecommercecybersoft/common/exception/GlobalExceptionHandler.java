@@ -41,13 +41,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler
     public ResponseEntity<ResponseDTO> handleDisableException(DisabledException exception) {
         logger.error("Disabled Exception: User is not active \n {}", exception.getMessage());
-        return ResponseUtils.errorDisabled(exception, HttpStatus.FORBIDDEN);
+        return ResponseUtils.errorDisabled(exception, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler
     public ResponseEntity<ResponseDTO> handleBadCredentialsException(BadCredentialsException exception) {
         logger.error("Bad Credentials Exception: Wrong password \n {}", exception.getMessage());
-        return ResponseUtils.errorBadCredentials(exception, HttpStatus.FORBIDDEN);
+        return ResponseUtils.errorBadCredentials(exception, HttpStatus.UNAUTHORIZED);
     }
 
     /**
