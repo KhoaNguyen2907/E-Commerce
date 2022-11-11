@@ -61,7 +61,7 @@ public class User extends BaseEntity {
 
     public enum  Status {
         ACTIVE,
-        TEMPOARY_BLOCKED,
+        TEMPORARY_BLOCKED,
         PERMANENTLY_BLOCKED
     }
 
