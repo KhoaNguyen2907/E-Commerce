@@ -1,7 +1,6 @@
-package com.ckt.ecommercecybersoft.user.model.response;
+package com.ckt.ecommercecybersoft.user.model.request;
 
 import com.ckt.ecommercecybersoft.address.dto.AddressDTO;
-import com.ckt.ecommercecybersoft.role.dto.RoleDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,24 +10,13 @@ import java.util.UUID;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class UserResponseModel {
+@AllArgsConstructor
+public class UserInfoModel {
     private UUID id;
-
-    private String username;
-
     private String email;
-
     private String name;
-
     private String avatar;
-
     private AddressDTO address;
 
-    private RoleDto role;
-
-    private String createdAt;
-
-    private String lastModifiedAt;
 }

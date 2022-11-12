@@ -1,5 +1,6 @@
 package com.ckt.ecommercecybersoft.user.model;
 
+import com.ckt.ecommercecybersoft.address.model.AddressEntity;
 import com.ckt.ecommercecybersoft.common.entity.BaseEntity;
 import com.ckt.ecommercecybersoft.role.model.Role;
 import com.ckt.ecommercecybersoft.user.utils.UserExceptionUtils;
@@ -39,6 +40,10 @@ public class User extends BaseEntity {
 
     @Column(name = UserColumn.AVATAR)
     private String avatar;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = UserColumn.ADDRESS)
+    private AddressEntity address;
 
     @Column(name = UserColumn.STATUS)
     @Enumerated(EnumType.STRING)

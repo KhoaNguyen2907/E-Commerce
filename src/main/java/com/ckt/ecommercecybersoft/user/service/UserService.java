@@ -2,7 +2,6 @@ package com.ckt.ecommercecybersoft.user.service;
 
 import com.ckt.ecommercecybersoft.common.service.GenericService;
 import com.ckt.ecommercecybersoft.role.dto.RoleDto;
-import com.ckt.ecommercecybersoft.role.model.Role;
 import com.ckt.ecommercecybersoft.user.dto.UserDto;
 import com.ckt.ecommercecybersoft.user.model.User;
 
@@ -29,5 +28,8 @@ public interface UserService extends GenericService<User, UserDto, UUID> {
 
     UserDto changeRole(UUID id, RoleDto roleDto);
 
+    void changePassword(UUID id, String oldPassword, String newPassword);
+
+    UserDto getCurrentUser();
 }
 

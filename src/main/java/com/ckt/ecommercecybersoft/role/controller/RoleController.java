@@ -1,13 +1,10 @@
 package com.ckt.ecommercecybersoft.role.controller;
 
-import com.ckt.ecommercecybersoft.common.exception.NotFoundException;
 import com.ckt.ecommercecybersoft.common.model.ResponseDTO;
-import com.ckt.ecommercecybersoft.common.utils.ProjectMapper;
 import com.ckt.ecommercecybersoft.common.utils.ResponseUtils;
 import com.ckt.ecommercecybersoft.role.dto.RoleDto;
 import com.ckt.ecommercecybersoft.role.model.Role;
 import com.ckt.ecommercecybersoft.role.service.RoleService;
-import com.ckt.ecommercecybersoft.role.utils.RoleExceptionUtils;
 import com.ckt.ecommercecybersoft.role.utils.RoleUrlUtils;
 import com.ckt.ecommercecybersoft.security.authorization.AdminOnly;
 import org.slf4j.Logger;
@@ -20,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping(RoleUrlUtils.ROLE_API_V1)
@@ -29,6 +25,12 @@ public class RoleController {
     private RoleService roleService;
     Logger logger = LoggerFactory.getLogger(RoleController.class);
 
+    /**
+     * Get all roles
+     * @param pagaSize page size default is 5.
+     * @param page page number default is 1.
+     * @return list of roles
+     */
     @AdminOnly
     @GetMapping
     public ResponseEntity<ResponseDTO> getAllRoles(@RequestParam(defaultValue = "5") int pageSize, @RequestParam(defaultValue = "1") int pageNumber) {
@@ -37,6 +39,11 @@ public class RoleController {
         return ResponseUtils.get(roles, HttpStatus.OK);
     }
 
+    /**
+     * Create new role
+     * @param roleDto role model with name, code and description
+     * @return role information
+     */
     @AdminOnly
     @PostMapping
     public ResponseEntity<ResponseDTO> createRole(@Valid @RequestBody RoleDto roleDto) {

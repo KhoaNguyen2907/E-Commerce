@@ -10,7 +10,8 @@ import com.ckt.ecommercecybersoft.user.dto.UserDto;
 import com.ckt.ecommercecybersoft.user.model.User;
 import com.ckt.ecommercecybersoft.user.model.request.PasswordModel;
 import com.ckt.ecommercecybersoft.user.model.request.PasswordResetRequestModel;
-import com.ckt.ecommercecybersoft.user.model.request.UserRequestModel;
+import com.ckt.ecommercecybersoft.user.model.request.UserInfoModel;
+import com.ckt.ecommercecybersoft.user.model.request.UserSignUpModel;
 import com.ckt.ecommercecybersoft.user.model.response.OperationName;
 import com.ckt.ecommercecybersoft.user.model.response.OperationStatus;
 import com.ckt.ecommercecybersoft.user.model.response.OperationStatusModel;
@@ -37,33 +38,83 @@ public class UserController {
     @Autowired
     private ProjectMapper mapper;
 
-    private Logger logger = LoggerFactory.getLogger(UserController.class);
+    private final Logger logger = LoggerFactory.getLogger(UserController.class);
 
+    /**
+     * Get all users with pagination
+     * @param pageSize page size
+     * @param pageNumber page number
+     * @return list of users
+     */
     @AdminOnly
     @GetMapping
     public ResponseEntity<ResponseDTO> getAllUsers(@RequestParam(defaultValue = "5") int pageSize, @RequestParam(defaultValue = "1") int pageNumber) {
         logger.info("Get all users at page {}  with page size {} ", pageNumber, pageSize);
-        List<UserDto> users =  userService.findAllDto(Pageable.ofSize(pageSize).withPage(pageNumber-1), UserDto.class);
+        List<UserDto> users = userService.findAllDto(Pageable.ofSize(pageSize).withPage(pageNumber - 1), UserDto.class);
         return ResponseUtils.get(users, HttpStatus.OK);
     }
 
+    /**
+     * Get user by id
+     * @param id user id, must be UUID
+     * @return user
+     */
     @AdminOnly
     @GetMapping(path = UserUrlUtils.BY_ID)
     public ResponseEntity<ResponseDTO> getUserById(@PathVariable UUID id) {
         logger.info("Get user by id: {}", id);
         User user = userService.findById(id).orElseThrow(() -> new NotFoundException("User not found"));
-        return ResponseUtils.get(mapper.map(user, UserDto.class), HttpStatus.OK);
+        UserResponseModel userResponseModel = mapper.map(user, UserResponseModel.class);
+        return ResponseUtils.get(userResponseModel, HttpStatus.OK);
     }
 
+
+    /**
+     * Get current user info by token in header
+     * @return user
+     */
+    @GetMapping(path = UserUrlUtils.CURRENT_LOGIN_USER)
+    public ResponseEntity<ResponseDTO> getCurrentUser() {
+        logger.info("Get current user");
+        UserDto userDto = userService.getCurrentUser();
+        UserResponseModel userResponseModel = mapper.map(userDto, UserResponseModel.class);
+        return ResponseUtils.get(userResponseModel, HttpStatus.OK);
+    }
+
+    /**
+     * Update user basic information
+     * @param user user info model
+     * @return updated user
+     */
     @PutMapping
-    public ResponseEntity<ResponseDTO> updateUser(@Valid @RequestBody UserRequestModel user) {
+    public ResponseEntity<ResponseDTO> updateUserInfo(@Valid @RequestBody UserInfoModel user) {
         UserDto userDto = mapper.map(user, UserDto.class);
-        logger.info("Update user id: {}. \n New user info: {}", userDto.getId(),userDto);
+        logger.info("Update user id: {}. \n New user info: {}", userDto.getId(), userDto);
         userDto = userService.updateUser(userDto);
         UserResponseModel userResponseModel = mapper.map(userDto, UserResponseModel.class);
         return ResponseUtils.get(userResponseModel, HttpStatus.OK);
     }
 
+    /**
+     * Change password
+     * @param passwordModel password model with old password, new password and user id
+     * @return operation status
+     */
+    @PutMapping(path = UserUrlUtils.CHANGE_PASSWORD)
+    public ResponseEntity<ResponseDTO> changePassword(@Valid @RequestBody PasswordModel passwordModel) {
+        logger.info("Change password for user id: {}", passwordModel.getId());
+        userService.changePassword(passwordModel.getId(), passwordModel.getOldPassword(), passwordModel.getPassword());
+        OperationStatusModel operationStatusModel = new OperationStatusModel();
+        operationStatusModel.setOperationName(OperationName.CHANGE_PASSWORD.name());
+        operationStatusModel.setOperationResult(OperationStatus.SUCCESS.name());
+        return ResponseUtils.get(operationStatusModel, HttpStatus.OK);
+    }
+
+    /**
+     * Delete user by id, only admin can delete user
+     * @param id user id must be UUID
+     * @return operation status
+     */
     @AdminOnly
     @DeleteMapping(path = UserUrlUtils.BY_ID)
     public ResponseEntity<ResponseDTO> deleteUser(@PathVariable UUID id) {
@@ -75,16 +126,26 @@ public class UserController {
         return ResponseUtils.get(operationStatusModel, HttpStatus.OK);
     }
 
+    /**
+     * Sign up new user
+     * @param user user sign up model with username, password, email, name, avatar url, address
+     * @return created user but not active, need to verify email
+     */
     @PostMapping(path = UserUrlUtils.SIGN_UP)
-    public ResponseEntity<ResponseDTO> signUp(@Valid @RequestBody UserRequestModel user) {
+    public ResponseEntity<ResponseDTO> signUp(@Valid @RequestBody UserSignUpModel user) {
         UserDto userDto = mapper.map(user, UserDto.class);
         logger.info("Sign up user: {}", userDto);
         UserDto createdUser = userService.createUser(userDto);
         logger.info("Created user: {}", createdUser);
         UserResponseModel userResponseModel = mapper.map(createdUser, UserResponseModel.class);
-       return ResponseUtils.get(userResponseModel, HttpStatus.CREATED);
+        return ResponseUtils.get(userResponseModel, HttpStatus.CREATED);
     }
 
+    /**
+     * Verify email after sign up, if email is verified, user will be active
+     * @param token token from email
+     * @return operation status
+     */
     @GetMapping(path = UserUrlUtils.EMAIL_VERIFICATION)
     public ResponseEntity<ResponseDTO> verifyEmail(@RequestParam String token) {
         OperationStatusModel operationStatusModel = new OperationStatusModel();
@@ -99,7 +160,12 @@ public class UserController {
         return ResponseUtils.get(operationStatusModel, HttpStatus.OK);
     }
 
-    @PostMapping (path = UserUrlUtils.PASSWORD_RESET_REQUEST)
+    /**
+     * Request to reset password, send email to user
+     * @param requestModel email of user
+     * @return operation status
+     */
+    @PostMapping(path = UserUrlUtils.PASSWORD_RESET_REQUEST)
     public ResponseEntity<ResponseDTO> requestResetPassword(@Valid @RequestBody PasswordResetRequestModel requestModel) {
         OperationStatusModel operationStatusModel = new OperationStatusModel();
         operationStatusModel.setOperationName(OperationName.REQUEST_PASSWORD_RESET.toString());
@@ -113,6 +179,11 @@ public class UserController {
         return ResponseUtils.get(operationStatusModel, HttpStatus.OK);
     }
 
+    /**
+     * Verify token to reset password
+     * @param token token from email
+     * @return operation status
+     */
     @GetMapping(path = UserUrlUtils.VERIFY_PASSWORD_RESET_TOKEN)
     public ResponseEntity<ResponseDTO> verifyPasswordResetToken(@RequestParam String token) {
         OperationStatusModel operationStatusModel = new OperationStatusModel();
@@ -127,8 +198,14 @@ public class UserController {
         return ResponseUtils.get(operationStatusModel, HttpStatus.OK);
     }
 
-    @PostMapping (path = UserUrlUtils.RESET_PASSWORD)
-    public ResponseEntity<ResponseDTO> resetPassword(@RequestParam String token,@Valid  @RequestBody PasswordModel passwordModel) {
+    /**
+     * Reset password
+     * @param passwordModel password reset model include new password;
+     * @param token token from email
+     * @return operation status
+     */
+    @PostMapping(path = UserUrlUtils.RESET_PASSWORD)
+    public ResponseEntity<ResponseDTO> resetPassword(@RequestParam String token, @Valid @RequestBody PasswordModel passwordModel) {
         OperationStatusModel operationStatusModel = new OperationStatusModel();
         operationStatusModel.setOperationName(OperationName.PASSWORD_RESET.toString());
         logger.info("New password: {}", passwordModel.getPassword());
@@ -142,7 +219,12 @@ public class UserController {
         return ResponseUtils.get(operationStatusModel, HttpStatus.OK);
     }
 
-    // Just need role code
+    /**
+     * Admin can change user role
+     * @param id user id must be UUID
+     * @param roleDto role model, just need role code. Role must be exist
+     * @return user
+     */
     @AdminOnly
     @PutMapping(path = UserUrlUtils.CHANGE_ROLE)
     public ResponseEntity<ResponseDTO> changeRole(@PathVariable UUID id, @RequestBody RoleDto roleDto) {

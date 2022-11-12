@@ -14,11 +14,5 @@ public class UserExceptionUtils {
     public static final String NAME_NOT_BLANK = "012 Name is not blank";
     public static final String USERNAME_NOT_BLANK = " 013 Name is not blank";
     public static final String PASSWORD_NOT_BLANK = "014 Password is not blank";
-
-
-
-
-
-
-
+    public static final String INCORRECT_PASSWORD = "016 Incorrect password";
 }

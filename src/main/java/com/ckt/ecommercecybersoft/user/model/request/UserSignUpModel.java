@@ -1,6 +1,6 @@
 package com.ckt.ecommercecybersoft.user.model.request;
 
-import com.ckt.ecommercecybersoft.role.dto.RoleDto;
+import com.ckt.ecommercecybersoft.address.dto.AddressDTO;
 import com.ckt.ecommercecybersoft.user.utils.UserExceptionUtils;
 import com.ckt.ecommercecybersoft.user.validation.annotation.UniqueEmail;
 import com.ckt.ecommercecybersoft.user.validation.annotation.UniqueUsername;
@@ -12,15 +12,12 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import java.util.UUID;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserRequestModel {
-    private UUID id;
-
+public class UserSignUpModel {
     @Length(min = 5, max = 50, message = UserExceptionUtils.USERNAME_LENGTH)
     @UniqueUsername
     @NotBlank
@@ -40,5 +37,5 @@ public class UserRequestModel {
 
     private String avatar;
 
-
+    private AddressDTO address;
 }
