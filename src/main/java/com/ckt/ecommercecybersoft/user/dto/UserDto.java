@@ -1,10 +1,12 @@
 package com.ckt.ecommercecybersoft.user.dto;
 
+import com.ckt.ecommercecybersoft.address.dto.AddressDTO;
 import com.ckt.ecommercecybersoft.role.dto.RoleDto;
 import com.ckt.ecommercecybersoft.user.model.User;
 import lombok.*;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -27,6 +29,8 @@ public class UserDto implements Serializable {
 
     private String avatar;
 
+    private AddressDTO address;
+
     private RoleDto role;
 
     private User.Status status;
@@ -34,6 +38,14 @@ public class UserDto implements Serializable {
     private String emailVerificationToken;
 
     private boolean emailVerified;
+
+    private String createdBy;
+
+    private String lastModifiedBy;
+
+    private LocalDateTime createdAt;
+
+    private LocalDateTime lastModifiedAt;
 
 
 }

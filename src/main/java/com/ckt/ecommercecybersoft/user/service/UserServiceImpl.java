@@ -1,5 +1,6 @@
 package com.ckt.ecommercecybersoft.user.service;
 
+import com.ckt.ecommercecybersoft.common.exception.BadRequestException;
 import com.ckt.ecommercecybersoft.common.exception.NotFoundException;
 import com.ckt.ecommercecybersoft.common.utils.ExceptionUtils;
 import com.ckt.ecommercecybersoft.common.utils.ProjectMapper;
@@ -8,13 +9,13 @@ import com.ckt.ecommercecybersoft.role.model.Role;
 import com.ckt.ecommercecybersoft.role.repository.RoleRepository;
 import com.ckt.ecommercecybersoft.role.utils.RoleExceptionUtils;
 import com.ckt.ecommercecybersoft.security.jwt.JwtUtils;
+import com.ckt.ecommercecybersoft.security.utils.SecurityUtils;
 import com.ckt.ecommercecybersoft.user.controller.UserController;
 import com.ckt.ecommercecybersoft.user.dto.UserDto;
 import com.ckt.ecommercecybersoft.user.model.User;
 import com.ckt.ecommercecybersoft.user.repository.UserRepository;
 import com.ckt.ecommercecybersoft.user.utils.MailUtils;
 import com.ckt.ecommercecybersoft.user.utils.UserExceptionUtils;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -141,6 +142,25 @@ public class UserServiceImpl implements UserService, Serializable {
 
         user.setRole(role);
         user = userRepository.save(user);
+        return getMapper().map(user, UserDto.class);
+    }
+
+    @Override
+    public void changePassword(UUID id, String oldPassword, String newPassword) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(UserExceptionUtils.USER_NOT_FOUND));
+        if (passwordEncoder.matches(oldPassword, user.getPassword())) {
+            user.setPassword(passwordEncoder.encode(newPassword));
+            userRepository.save(user);
+        } else {
+            throw new BadRequestException(UserExceptionUtils.INCORRECT_PASSWORD);
+        }
+    }
+
+    @Override
+    public UserDto getCurrentUser() {
+        String username = SecurityUtils.getLoginUsername().orElseThrow(() -> new NotFoundException(UserExceptionUtils.USER_NOT_FOUND));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new NotFoundException(UserExceptionUtils.USER_NOT_FOUND));
         return getMapper().map(user, UserDto.class);
     }
 

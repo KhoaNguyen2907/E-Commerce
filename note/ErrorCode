@@ -15,6 +15,7 @@ ERROR CODE DESCRIPTION
 012: Name is not blank
 013: Name is not blank
 014: Password is not blank
+016: Incorrect password
 
 015: This session has expired. Please request a new one
 
