@@ -1,11 +1,16 @@
 server:
   port: 8080
 
+fe.host: ${FE_HOST:localhost:8080}
+
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5431/postgres
-    username: postgres
-    password: 1234
+#    url: jdbc:postgresql://localhost:5432/postgres
+#    username: postgres
+#    password: 1234
+    url: jdbc:postgresql://${RDS_HOSTNAME:localhost}:${RDS_PORT:5432}/${RDS_DB_NAME:postgres}
+    username: ${RDS_USERNAME:postgres}
+    password: ${RDS_PASSWORD:1234}
 
   jpa:
     hibernate:
@@ -42,6 +47,8 @@ spring:
     pathmatch:
       matching-strategy: ANT_PATH_MATCHER
 
+  cache:
+    type: redis
   redis:
-    host: 127.0.0.1
-    port: 6379
+    host: ${REDIS_HOST:127.0.0.1}
+    port: ${REDIS_PORT:6379}

@@ -17,7 +17,9 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -72,14 +74,14 @@ public class ResponseUtils {
 
     public static ResponseEntity<ResponseDTO> errorDisabled(DisabledException exception, HttpStatus status) {
         String message = exception.getMessage();
-        List<Error> errorList = List.of(new Error(003,message));
+        List<Error> errorList = List.of(new Error(3,message));
         ResponseDTO response = getResponseDto(null, status, errorList);
         return new ResponseEntity<>(response, status);
     }
 
     public static ResponseEntity<ResponseDTO> errorBadCredentials(BadCredentialsException exception, HttpStatus status) {
         String message = "Wrong password";
-        List<Error> errorList = List.of(new Error(004,message));
+        List<Error> errorList = List.of(new Error(4,message));
         ResponseDTO response = getResponseDto(null, status, errorList);
         return new ResponseEntity<>(response, status);
     }
@@ -89,7 +91,7 @@ public class ResponseUtils {
         String error = exception.getMessage();
 
         String message = "Please login";
-        int errorCode = 001;
+        int errorCode = 1;
         if (error.startsWith("00")){
             errorCode = getErrorCode(error);
             message = getErrorMessage(error);
@@ -101,7 +103,7 @@ public class ResponseUtils {
 
     public static ResponseEntity<ResponseDTO> errorForbidden(ForbiddenException exception, HttpStatus status) {
         String message = "Don't have permission to access this resource";
-        List<Error> errorList = List.of(new Error(002,message));
+        List<Error> errorList = List.of(new Error(2,message));
         ResponseDTO response = getResponseDto(null, status, errorList);
 
         return new ResponseEntity<>(response, status);
@@ -124,8 +126,10 @@ public class ResponseUtils {
         if (errorList == null){
             hasError = false;
         }
+        boolean isContentArray = data != null && data.toString().charAt(0) == '[';
+
         return ResponseDTO.builder().content(data).hasErrors(hasError).errors(errorList)
-                .timestamp(DateTimeUtils.now()).status(status.value()).build();
+                .timestamp(DateTimeUtils.now()).status(status.value()).isContentArray(isContentArray).build();
     }
 
 

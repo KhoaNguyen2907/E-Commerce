@@ -21,6 +21,12 @@ import com.ckt.ecommercecybersoft.user.utils.UserUrlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +35,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = UserUrlUtils.USER_API_V1)
@@ -63,7 +70,7 @@ public class UserController {
     @GetMapping(path = UserUrlUtils.BY_ID)
     public ResponseEntity<ResponseDTO> getUserById(@PathVariable UUID id) {
         logger.info("Get user by id: {}", id);
-        User user = userService.findById(id).orElseThrow(() -> new NotFoundException("User not found"));
+        UserDto user = userService.findUserById(id);
         UserResponseModel userResponseModel = mapper.map(user, UserResponseModel.class);
         return ResponseUtils.get(userResponseModel, HttpStatus.OK);
     }
@@ -82,13 +89,17 @@ public class UserController {
     }
 
     /**
-     * Update user basic information
-     * @param user user info model
+     * Update user basic information. Only admin can update other user's information
+     * Just update info of current login user
+     * @param user user info model, user id is not required
      * @return updated user
      */
     @PutMapping
     public ResponseEntity<ResponseDTO> updateUserInfo(@Valid @RequestBody UserInfoModel user) {
         UserDto userDto = mapper.map(user, UserDto.class);
+        UserDto currentLoginUser = userService.getCurrentUser();
+        userDto.setId(currentLoginUser.getId());
+        userDto.setUsername(currentLoginUser.getUsername());
         logger.info("Update user id: {}. \n New user info: {}", userDto.getId(), userDto);
         userDto = userService.updateUser(userDto);
         UserResponseModel userResponseModel = mapper.map(userDto, UserResponseModel.class);
@@ -96,17 +107,23 @@ public class UserController {
     }
 
     /**
-     * Change password
-     * @param passwordModel password model with old password, new password and user id
+     * Change password of current login user
+     * @param passwordModel password model with old password, new password
      * @return operation status
      */
     @PutMapping(path = UserUrlUtils.CHANGE_PASSWORD)
     public ResponseEntity<ResponseDTO> changePassword(@Valid @RequestBody PasswordModel passwordModel) {
+        UserDto currentLoginUser = userService.getCurrentUser();
+        passwordModel.setId(currentLoginUser.getId());
         logger.info("Change password for user id: {}", passwordModel.getId());
-        userService.changePassword(passwordModel.getId(), passwordModel.getOldPassword(), passwordModel.getPassword());
+        boolean isChanged = userService.changePassword(passwordModel.getId(), passwordModel.getOldPassword(), passwordModel.getPassword());
         OperationStatusModel operationStatusModel = new OperationStatusModel();
         operationStatusModel.setOperationName(OperationName.CHANGE_PASSWORD.name());
-        operationStatusModel.setOperationResult(OperationStatus.SUCCESS.name());
+        if (isChanged) {
+            operationStatusModel.setOperationResult(OperationStatus.SUCCESS.name());
+        } else {
+            operationStatusModel.setOperationResult(OperationStatus.ERROR.name());
+        }
         return ResponseUtils.get(operationStatusModel, HttpStatus.OK);
     }
 
@@ -119,10 +136,14 @@ public class UserController {
     @DeleteMapping(path = UserUrlUtils.BY_ID)
     public ResponseEntity<ResponseDTO> deleteUser(@PathVariable UUID id) {
         logger.info("Delete user id: {} ", id);
-        userService.deleteById(id);
+        boolean isDeleted = userService.deleteUser(id);
         OperationStatusModel operationStatusModel = new OperationStatusModel();
         operationStatusModel.setOperationName(OperationName.DELETE.name());
-        operationStatusModel.setOperationResult(OperationStatus.SUCCESS.name());
+        if (isDeleted) {
+            operationStatusModel.setOperationResult(OperationStatus.SUCCESS.name());
+        } else {
+            operationStatusModel.setOperationResult(OperationStatus.ERROR.name());
+        }
         return ResponseUtils.get(operationStatusModel, HttpStatus.OK);
     }
 
@@ -232,6 +253,17 @@ public class UserController {
         UserDto userDto = userService.changeRole(id, roleDto);
         UserResponseModel userResponseModel = mapper.map(userDto, UserResponseModel.class);
         return ResponseUtils.get(userResponseModel, HttpStatus.OK);
+    }
+
+    @GetMapping(path = UserUrlUtils.SEARCH_USER)
+    public ResponseEntity<ResponseDTO> searchUser(@RequestParam String keyword, @RequestParam(defaultValue = "5") int pageSize, @RequestParam(defaultValue = "1") int pageNumber) {
+        logger.info("Search user with keyword: {}", keyword);
+        List<UserDto> userDtoPage = userService.searchUser(keyword, Pageable.ofSize(pageSize).withPage(pageNumber-1));
+        if (userDtoPage == null) {
+            return ResponseUtils.get(null, HttpStatus.OK);
+        }
+        List<UserResponseModel> userResponseModelList = userDtoPage.stream().map(userDto -> mapper.map(userDto, UserResponseModel.class)).collect(Collectors.toList());
+        return ResponseUtils.get(userResponseModelList, HttpStatus.OK);
     }
 
 }

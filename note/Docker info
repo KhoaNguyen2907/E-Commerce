@@ -1,0 +1,13 @@
+Redis Info:
+${REDIS_HOST:127.0.0.1}
+${REDIS_PORT:6379}
+
+Postgres Info:
+{RDS_HOSTNAME:localhost}
+{RDS_PORT:5432}
+{RDS_DB_NAME:postgres}
+{RDS_USERNAME:postgres}
+{RDS_PASSWORD:1234}
+
+Frond End Host:
+${FE_HOST:localhost:8080}

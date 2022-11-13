@@ -12,7 +12,7 @@ public class UserExceptionUtils {
     public static final String EMAIL_INVALID = "010 Email is not valid";
     public static final String EMAIL_NOT_BLANK = "011 Email is not blank";
     public static final String NAME_NOT_BLANK = "012 Name is not blank";
-    public static final String USERNAME_NOT_BLANK = " 013 Name is not blank";
+    public static final String USERNAME_NOT_BLANK = "013 Name is not blank";
     public static final String PASSWORD_NOT_BLANK = "014 Password is not blank";
     public static final String INCORRECT_PASSWORD = "016 Incorrect password";
 }

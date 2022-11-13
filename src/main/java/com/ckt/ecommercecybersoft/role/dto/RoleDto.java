@@ -14,6 +14,7 @@ import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -21,6 +22,7 @@ import java.util.Set;
 @NoArgsConstructor
 public class RoleDto implements Serializable {
     private static final long serialVersionUID = 1L;
+    private UUID id;
 
     @Length(min = 2, max = 18, message = RoleExceptionUtils.NAME_LENGTH)
     @NotBlank(message = RoleExceptionUtils.NAME_NOT_BLANK)

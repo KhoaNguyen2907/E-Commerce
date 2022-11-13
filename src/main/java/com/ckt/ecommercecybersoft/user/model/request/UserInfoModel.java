@@ -13,10 +13,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserInfoModel {
-    private UUID id;
     private String email;
     private String name;
     private String avatar;
     private AddressDTO address;
-
 }

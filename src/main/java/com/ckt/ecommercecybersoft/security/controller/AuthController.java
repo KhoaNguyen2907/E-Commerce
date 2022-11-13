@@ -1,5 +1,6 @@
 package com.ckt.ecommercecybersoft.security.controller;
 
+import com.ckt.ecommercecybersoft.common.model.ResponseDTO;
 import com.ckt.ecommercecybersoft.security.dto.LoginRequestModel;
 import com.ckt.ecommercecybersoft.security.jwt.JwtUtils;
 import com.ckt.ecommercecybersoft.user.model.response.OperationName;
@@ -45,6 +46,6 @@ public class AuthController {
         operationStatusModel.setOperationName(OperationName.LOGIN.name());
         operationStatusModel.setOperationResult(OperationStatus.SUCCESS.name());
         return ResponseEntity.ok().header("Authorization", jwtToken)
-                .body(operationStatusModel);
+                .body(new ResponseDTO(operationStatusModel, false, null, System.currentTimeMillis(), false, 200));
     }
 }

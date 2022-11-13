@@ -1,0 +1,50 @@
+version: '3.7'
+services:
+  ecommerce-web-app:
+    image: ndkhoalk97/cybersoft-ecommerce-app:0.0.1-SNAPSHOT
+    ports:
+      - "8080:8080"
+    restart: always
+    depends_on: # Start the depends_on first
+      - my-postgresql
+    environment:
+      RDS_HOSTNAME: my-postgresql
+      RDS_PORT: 5432
+      RDS_DB_NAME: postgres
+      RDS_USERNAME: postgres
+      RDS_PASSWORD: 1234
+
+      REDIS_HOST: my-redis
+      REDIS_PORT: 6379
+
+      FE_HOST: localhost:8080
+    networks:
+      - cybersoft-ecommerce-network
+
+  my-postgresql:
+    image: postgres:14-alpine
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: 1234
+      MYSQL_DATABASE: postgres
+    volumes:
+      - postgres-cybersoft-ecommerce-data:/var/lib/postgresql/data
+    networks:
+      - cybersoft-ecommerce-network
+
+  my-redis:
+    image: redis:7.0-alpine
+    ports:
+      - "6379:6379"
+    restart: always
+    networks:
+      - cybersoft-ecommerce-network
+# Volumes
+volumes:
+  postgres-cybersoft-ecommerce-data:
+    external: true
+
+networks:
+  cybersoft-ecommerce-network:
