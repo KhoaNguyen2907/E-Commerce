@@ -15,6 +15,14 @@ ERROR CODE DESCRIPTION
 012: Name is not blank
 013: Name is not blank
 014: Password is not blank
+016: Incorrect password
 
 015: This session has expired. Please request a new one
+
+017: Role not found
+018 Role name must be between {min} and {max} characters
+019 Role code must be between {min} and {max} characters
+020 Role name is not blank
+021 Role code is not blank
+
 

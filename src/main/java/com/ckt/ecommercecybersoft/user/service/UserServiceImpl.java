@@ -1,5 +1,6 @@
 package com.ckt.ecommercecybersoft.user.service;
 
+import com.ckt.ecommercecybersoft.common.exception.BadRequestException;
 import com.ckt.ecommercecybersoft.common.exception.NotFoundException;
 import com.ckt.ecommercecybersoft.common.utils.ExceptionUtils;
 import com.ckt.ecommercecybersoft.common.utils.ProjectMapper;
@@ -8,22 +9,33 @@ import com.ckt.ecommercecybersoft.role.model.Role;
 import com.ckt.ecommercecybersoft.role.repository.RoleRepository;
 import com.ckt.ecommercecybersoft.role.utils.RoleExceptionUtils;
 import com.ckt.ecommercecybersoft.security.jwt.JwtUtils;
+import com.ckt.ecommercecybersoft.security.utils.SecurityUtils;
 import com.ckt.ecommercecybersoft.user.controller.UserController;
 import com.ckt.ecommercecybersoft.user.dto.UserDto;
 import com.ckt.ecommercecybersoft.user.model.User;
 import com.ckt.ecommercecybersoft.user.repository.UserRepository;
 import com.ckt.ecommercecybersoft.user.utils.MailUtils;
 import com.ckt.ecommercecybersoft.user.utils.UserExceptionUtils;
-import lombok.RequiredArgsConstructor;
+import org.hibernate.cache.spi.support.CacheUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * User service implementation
@@ -40,6 +52,9 @@ public class UserServiceImpl implements UserService, Serializable {
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
     private final RoleRepository roleRepository;
+
+    @Value("${fe.host}")
+    private String feHost;
 
 
     public UserServiceImpl(EmailService emailService, UserRepository userRepository, ProjectMapper mapper, PasswordEncoder passwordEncoder,
@@ -82,7 +97,7 @@ public class UserServiceImpl implements UserService, Serializable {
         user.setRole(userRole);
         user = userRepository.save(user);
         String token = JwtUtils.generateEmailToken(user.getUsername());
-        emailService.sendEmail(user.getEmail(), MailUtils.EMAIL_VERIFICATION_SUBJECT, MailUtils.EMAIL_VERIFICATION_BODY + MailUtils.EMAIL_VERIFICATION_URL + token);
+        emailService.sendEmail(user.getEmail(), MailUtils.EMAIL_VERIFICATION_SUBJECT, MailUtils.EMAIL_VERIFICATION_BODY + feHost+MailUtils.EMAIL_VERIFICATION_URL + token);
         logger.info("User created successfully, email verification sent to the user");
         return getMapper().map(user, UserDto.class);
     }
@@ -90,21 +105,54 @@ public class UserServiceImpl implements UserService, Serializable {
      * User can update their information except for their username, role and email.
      */
     @Override
+    @Caching(
+            put = {
+                    @CachePut(value = "users", key = "#userDto.id"),
+                    @CachePut(value = "users", key = "#userDto.username")
+            }
+    )
     public UserDto updateUser(UserDto userDto) {
-        User user = userRepository.findById(userDto.getId()).orElseThrow(() -> new NotFoundException(UserExceptionUtils.USER_NOT_FOUND));
-        user.setName(userDto.getName());
-        user.setAvatar(userDto.getAvatar());
-        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        user = userRepository.save(user);
-        return getMapper().map(user, UserDto.class);
+        User newUser = getMapper().map(userDto, User.class);
+        User updateUser = userRepository.findById(userDto.getId()).orElseThrow(() -> new NotFoundException(UserExceptionUtils.USER_NOT_FOUND));
+        updateUser.setAvatar(newUser.getAvatar());
+        updateUser.setName(newUser.getName());
+        updateUser.setEmail(newUser.getEmail());
+        updateUser.setAddress(newUser.getAddress());
+        return getMapper().map(newUser, UserDto.class);
+    }
+
+    @Override
+    @CacheEvict(value = "users", key = "#id")
+    public boolean deleteUser(UUID id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException(UserExceptionUtils.USER_NOT_FOUND));
+        user.setStatus(User.Status.PERMANENTLY_BLOCKED);
+        userRepository.save(user);
+        removeCache(user.getUsername());
+        return true;
     }
 
     /**
      * Find user by username
      */
     @Override
+    @Cacheable(value = "users", key = "#username")
     public UserDto findByUsername(String username) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new NotFoundException(UserExceptionUtils.USER_NOT_FOUND));
+        return getMapper().map(user, UserDto.class);
+    }
+
+    //remove cache by username
+    @CacheEvict(value = "users", key = "#username")
+    public void removeCache(String username) {
+    }
+
+    /**
+     * Find user by id
+     */
+    @Override
+    @Cacheable(value = "users", key = "#id")
+    public UserDto findUserById(UUID id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException(UserExceptionUtils.USER_NOT_FOUND));
         return getMapper().map(user, UserDto.class);
     }
 
@@ -144,6 +192,35 @@ public class UserServiceImpl implements UserService, Serializable {
         return getMapper().map(user, UserDto.class);
     }
 
+    @Override
+    public boolean changePassword(UUID id, String oldPassword, String newPassword) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(UserExceptionUtils.USER_NOT_FOUND));
+        if (passwordEncoder.matches(oldPassword, user.getPassword())) {
+            user.setPassword(passwordEncoder.encode(newPassword));
+            userRepository.save(user);
+            return true;
+        } else {
+            throw new BadRequestException(UserExceptionUtils.INCORRECT_PASSWORD);
+        }
+    }
+
+    @Override
+    public UserDto getCurrentUser() {
+        String username = SecurityUtils.getLoginUsername().orElseThrow(() -> new NotFoundException(UserExceptionUtils.USER_NOT_FOUND));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new NotFoundException(UserExceptionUtils.USER_NOT_FOUND));
+        return getMapper().map(user, UserDto.class);
+    }
+
+    @Override
+    public List<UserDto> searchUser(String keyword, Pageable pageable) {
+        List<User> users = userRepository.findUserByKeyword(keyword.toLowerCase(), pageable);
+        if (users.isEmpty()) {
+            return null;
+        }
+        return users.stream().map(user -> getMapper().map(user, UserDto.class)).collect(Collectors.toList());
+    }
+
     /**
      * Receives an email and sends a password reset link to the user. If the user is not found, it throws an exception.
      */
@@ -157,7 +234,7 @@ public class UserServiceImpl implements UserService, Serializable {
 //            emailService.sendEmail(user.getEmail(), "Password Reset", "Please click on the link below to reset your password: http://localhost:8080/api/v1/users/password-reset?token=" + user.getPasswordResetToken());
 
             String token = JwtUtils.generateEmailToken(user.getUsername());
-            emailService.sendEmail(user.getEmail(), MailUtils.PASSWORD_RESET_REQUEST_SUBJECT, MailUtils.PASSWORD_RESET_REQUEST_BODY + MailUtils.PASSWORD_RESET_URL + token);
+            emailService.sendEmail(user.getEmail(), MailUtils.PASSWORD_RESET_REQUEST_SUBJECT, MailUtils.PASSWORD_RESET_REQUEST_BODY + feHost+MailUtils.PASSWORD_RESET_URL + token);
             logger.info("Password reset request sent to the user's email");
             return true;
         }
@@ -202,7 +279,6 @@ public class UserServiceImpl implements UserService, Serializable {
                 throw new NotFoundException(ExceptionUtils.EXPIRED_TOKEN);
             }
         }
-
         return null;
     }
 }

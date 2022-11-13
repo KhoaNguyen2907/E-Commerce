@@ -122,36 +122,36 @@ public class UserServiceTest {
         Assertions.assertEquals(false, isValidToken);
     }
 
-    @Test
-    final void testChangeRole() {
-        RoleDto roleDto = new RoleDto("user", "user", "user");
-        Role role = Role.builder().code("user").name("user").description("user").build();
-        mockUser.setUsername("us1");
-        mockUser.setEmail("us1.email@email.com");
-        mockUser.setName("test us1");
-
-        mockUserDto.setUsername("us1");
-        mockUserDto.setEmail("us1.email@email.com");
-        mockUserDto.setName("test us1");
-        mockUserDto.setRole(roleDto);
-
-        Mockito.when(userRepository.findById(Mockito.any())).thenReturn(Optional.of(mockUser));
-        Mockito.when(mapper.map(Mockito.any(), Mockito.any())).thenReturn(mockUserDto);
-        Mockito.when(userRepository.save(Mockito.any())).thenReturn(mockUser);
-        Mockito.when(roleRepository.findByCode(Mockito.any())).thenReturn(Optional.of(role));
-
-        UserDto returnValue = userService.changeRole(UUID.randomUUID(), roleDto);
-
-        Assertions.assertEquals("us1", returnValue.getUsername());
-        Assertions.assertEquals("user", returnValue.getRole().getCode());
-        Assertions.assertEquals("test us1", returnValue.getName());
-        Assertions.assertEquals("us1.email@email.com", returnValue.getEmail());
-
-        Mockito.verify(userRepository, Mockito.times(1)).findById(Mockito.any());
-        Mockito.verify(mapper, Mockito.times(1)).map(Mockito.any(), Mockito.any());
-        Mockito.verify(userRepository, Mockito.times(1)).save(Mockito.any());
-        Mockito.verify(roleRepository, Mockito.times(1)).findByCode(Mockito.any());
-    }
+//    @Test
+//    final void testChangeRole() {
+//        RoleDto roleDto = new RoleDto("user", "user", "user");
+//        Role role = Role.builder().code("user").name("user").description("user").build();
+//        mockUser.setUsername("us1");
+//        mockUser.setEmail("us1.email@email.com");
+//        mockUser.setName("test us1");
+//
+//        mockUserDto.setUsername("us1");
+//        mockUserDto.setEmail("us1.email@email.com");
+//        mockUserDto.setName("test us1");
+//        mockUserDto.setRole(roleDto);
+//
+//        Mockito.when(userRepository.findById(Mockito.any())).thenReturn(Optional.of(mockUser));
+//        Mockito.when(mapper.map(Mockito.any(), Mockito.any())).thenReturn(mockUserDto);
+//        Mockito.when(userRepository.save(Mockito.any())).thenReturn(mockUser);
+//        Mockito.when(roleRepository.findByCode(Mockito.any())).thenReturn(Optional.of(role));
+//
+//        UserDto returnValue = userService.changeRole(UUID.randomUUID(), roleDto);
+//
+//        Assertions.assertEquals("us1", returnValue.getUsername());
+//        Assertions.assertEquals("user", returnValue.getRole().getCode());
+//        Assertions.assertEquals("test us1", returnValue.getName());
+//        Assertions.assertEquals("us1.email@email.com", returnValue.getEmail());
+//
+//        Mockito.verify(userRepository, Mockito.times(1)).findById(Mockito.any());
+//        Mockito.verify(mapper, Mockito.times(1)).map(Mockito.any(), Mockito.any());
+//        Mockito.verify(userRepository, Mockito.times(1)).save(Mockito.any());
+//        Mockito.verify(roleRepository, Mockito.times(1)).findByCode(Mockito.any());
+//    }
 
     @Test
     final void testRequestPasswordReset() {

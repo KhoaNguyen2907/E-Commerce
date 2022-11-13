@@ -6,4 +6,6 @@ import lombok.experimental.UtilityClass;
 public class RoleUrlUtils {
     public static final String ROLE_API_V1 = "/api/v1/roles";
     public static final String BY_ID = "/{id}";
+    public static final String BY_CODE = "/{code}";
+    public static final String SEARCH_ROLE = "/search";
 }
