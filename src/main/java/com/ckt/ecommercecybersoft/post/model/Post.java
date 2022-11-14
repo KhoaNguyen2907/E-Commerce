@@ -1,15 +1,14 @@
 package com.ckt.ecommercecybersoft.post.model;
 
 import com.ckt.ecommercecybersoft.common.entity.BaseEntity;
+import com.ckt.ecommercecybersoft.user.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 
 @Entity
@@ -32,6 +31,10 @@ public class Post extends BaseEntity {
 
     @Column(name = PostEntity.Post.CONTENT)
     private String content;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn (name = "user_id")
+    private User user;
 
     @Override
     public boolean equals(Object obj) {
