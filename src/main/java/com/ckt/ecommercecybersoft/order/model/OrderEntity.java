@@ -1,10 +1,8 @@
 package com.ckt.ecommercecybersoft.order.model;
 
-import com.ckt.ecommercecybersoft.order.dto.RequestOrderItemDTO;
 import com.ckt.ecommercecybersoft.address.model.AddressEntity;
 import com.ckt.ecommercecybersoft.common.entity.BaseEntity;
 import com.ckt.ecommercecybersoft.order.constant.OrderConstant;
-import com.ckt.ecommercecybersoft.order.dto.ResponseOrderItemDTO;
 import com.ckt.ecommercecybersoft.product.model.ProductEntity;
 import com.ckt.ecommercecybersoft.user.model.User;
 import lombok.Getter;
@@ -12,9 +10,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Setter
 @Getter

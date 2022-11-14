@@ -2,6 +2,8 @@ package com.ckt.ecommercecybersoft.user.model;
 
 import com.ckt.ecommercecybersoft.address.model.AddressEntity;
 import com.ckt.ecommercecybersoft.common.entity.BaseEntity;
+import com.ckt.ecommercecybersoft.order.model.OrderEntity;
+import com.ckt.ecommercecybersoft.post.model.Post;
 import com.ckt.ecommercecybersoft.role.model.Role;
 import com.ckt.ecommercecybersoft.user.utils.UserExceptionUtils;
 import lombok.Getter;
@@ -14,6 +16,7 @@ import org.hibernate.validator.constraints.Length;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 @Getter
 @Setter
@@ -59,6 +62,14 @@ public class User extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE })
     @JoinColumn(name = UserColumn.ROLE_ID)
     private Role role;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<OrderEntity> orders;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Post> posts;
+
+
 
     @PreRemove
     private void preRemove() {

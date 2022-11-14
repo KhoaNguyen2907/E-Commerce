@@ -1,13 +1,13 @@
 package com.ckt.ecommercecybersoft.user.controller;
 
-import com.ckt.ecommercecybersoft.common.exception.NotFoundException;
 import com.ckt.ecommercecybersoft.common.model.ResponseDTO;
 import com.ckt.ecommercecybersoft.common.utils.ProjectMapper;
 import com.ckt.ecommercecybersoft.common.utils.ResponseUtils;
+import com.ckt.ecommercecybersoft.order.dto.ResponseOrderDTO;
+import com.ckt.ecommercecybersoft.post.dto.PostDTO;
 import com.ckt.ecommercecybersoft.role.dto.RoleDto;
 import com.ckt.ecommercecybersoft.security.authorization.AdminOnly;
 import com.ckt.ecommercecybersoft.user.dto.UserDto;
-import com.ckt.ecommercecybersoft.user.model.User;
 import com.ckt.ecommercecybersoft.user.model.request.PasswordModel;
 import com.ckt.ecommercecybersoft.user.model.request.PasswordResetRequestModel;
 import com.ckt.ecommercecybersoft.user.model.request.UserInfoModel;
@@ -21,12 +21,6 @@ import com.ckt.ecommercecybersoft.user.utils.UserUrlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -264,6 +258,25 @@ public class UserController {
         }
         List<UserResponseModel> userResponseModelList = userDtoPage.stream().map(userDto -> mapper.map(userDto, UserResponseModel.class)).collect(Collectors.toList());
         return ResponseUtils.get(userResponseModelList, HttpStatus.OK);
+    }
+
+    @GetMapping(path = UserUrlUtils.GET_ORDERS)
+    public ResponseEntity<ResponseDTO> getOrders(@PathVariable UUID id, @RequestParam(defaultValue = "5") int pageSize, @RequestParam(defaultValue = "1") int pageNumber) {
+        logger.info("Get orders of user id: {}", id);
+        //if user is not admin, only get orders of current user
+        UserDto currentUser = userService.getCurrentUser();
+        if (!currentUser.getRole().getCode().equals("ADMIN")) {
+            id = currentUser.getId();
+        }
+        List<ResponseOrderDTO> orderDtoPage = userService.findUserById(id).getOrders().subList((pageNumber-1)*pageSize, pageNumber*pageSize);
+        return ResponseUtils.get(orderDtoPage, HttpStatus.OK);
+    }
+
+    @GetMapping(path = UserUrlUtils.GET_POSTS)
+    public ResponseEntity<ResponseDTO> getPosts(@PathVariable UUID id, @RequestParam(defaultValue = "5") int pageSize, @RequestParam(defaultValue = "1") int pageNumber) {
+        logger.info("Get posts of user id: {}", id);
+        List<PostDTO> postDtoPage = userService.findUserById(id).getPosts().subList((pageNumber-1)*pageSize, pageNumber*pageSize);
+        return ResponseUtils.get(postDtoPage, HttpStatus.OK);
     }
 
 }
