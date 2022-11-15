@@ -1,6 +1,7 @@
 package com.ckt.ecommercecybersoft.order.dto;
 
 import com.ckt.ecommercecybersoft.address.dto.AddressDTO;
+import com.ckt.ecommercecybersoft.user.dto.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,4 +19,5 @@ public class ResponseOrderDTO {
     private String status;
     private long totalCost;
     private List<ResponseOrderItemDTO> orderItems;
+    private UserDto userDto;
 }
