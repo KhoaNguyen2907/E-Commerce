@@ -14,6 +14,7 @@ import com.ckt.ecommercecybersoft.address.service.AddressService;
 import com.ckt.ecommercecybersoft.product.dto.ProductDTO;
 import com.ckt.ecommercecybersoft.product.model.ProductEntity;
 import com.ckt.ecommercecybersoft.product.service.ProductService;
+import com.ckt.ecommercecybersoft.user.dto.UserDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
@@ -91,7 +92,7 @@ class OrderServiceImpl implements OrderService {
             }
         });
         OrderEntity savedOrderEntity = orderRepository.save(orderEntity);
-        List<ResponseOrderItemDTO> ResponseOrderItemDTOs =
+        List<ResponseOrderItemDTO> responseOrderItemDTOs =
                 savedOrderEntity.getOrderItems().stream()
                         .map(orderItem -> {
                             return new ResponseOrderItemDTO(
@@ -106,8 +107,8 @@ class OrderServiceImpl implements OrderService {
                 savedOrderEntity.getComment(),
                 savedOrderEntity.getStatus(),
                 savedOrderEntity.getTotalCost(),
-                ResponseOrderItemDTOs
-
+                responseOrderItemDTOs,
+                mapper.map(savedOrderEntity.getUser(), UserDto.class)
         );
         return responseOrderDTO;
     }
