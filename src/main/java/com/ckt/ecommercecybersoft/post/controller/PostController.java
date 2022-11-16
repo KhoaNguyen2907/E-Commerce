@@ -23,7 +23,7 @@ public class PostController {
     private final ProjectMapper postMapper;
     private final PostService postService;
 
-    public PostController (ProjectMapper postMapper, PostService postService){
+    public PostController(ProjectMapper postMapper, PostService postService) {
         this.postMapper = postMapper;
         this.postService = postService;
     }
@@ -34,18 +34,18 @@ public class PostController {
     }
 
     @GetMapping(PostUrlUtils.GET_ALL_WITH_PAGING)
-    public ResponseEntity<ResponseDTO> getAllPostDtoPaging (@RequestParam("size") int size, @RequestParam(value = "index", defaultValue = "1") int index) {
+    public ResponseEntity<ResponseDTO> getAllPostDtoPaging(@RequestParam(value = "size", defaultValue = "1") int size, @RequestParam(value = "index", defaultValue = "0") int index) {
         return ResponseUtils.get(postService.findAllDto(Pageable.ofSize(size).withPage(index), PostDTO.class), HttpStatus.OK);
     }
 
     @GetMapping(PostUrlUtils.GET_BY_ID)
-    public ResponseEntity<ResponseDTO> getPostById (@PathVariable("id")UUID id) {
+    public ResponseEntity<ResponseDTO> getPostById(@PathVariable("id") UUID id) {
         Post post = postService.findById(id).orElseThrow(() -> new NotFoundException("Post not found!"));
         return ResponseUtils.get(postMapper.map(post, PostDTO.class), HttpStatus.OK);
     }
 
     @PostMapping(PostUrlUtils.ADD_POST)
-    public ResponseEntity<ResponseDTO> addPost (@RequestBody @Valid PostDTO postDTO){
+    public ResponseEntity<ResponseDTO> addPost(@RequestBody @Valid PostDTO postDTO) {
         return ResponseUtils.get(postService.save(postDTO, Post.class), HttpStatus.CREATED);
     }
 
