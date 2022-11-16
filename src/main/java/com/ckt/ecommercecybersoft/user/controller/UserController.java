@@ -1,12 +1,9 @@
 package com.ckt.ecommercecybersoft.user.controller;
 
-import com.ckt.ecommercecybersoft.cart.dto.CartItemResponseDTO;
 import com.ckt.ecommercecybersoft.common.exception.NotFoundException;
 import com.ckt.ecommercecybersoft.common.model.ResponseDTO;
 import com.ckt.ecommercecybersoft.common.utils.ProjectMapper;
 import com.ckt.ecommercecybersoft.common.utils.ResponseUtils;
-import com.ckt.ecommercecybersoft.order.dto.ResponseOrderDTO;
-import com.ckt.ecommercecybersoft.post.dto.PostDTO;
 import com.ckt.ecommercecybersoft.role.dto.RoleDto;
 import com.ckt.ecommercecybersoft.security.authorization.AdminOnly;
 import com.ckt.ecommercecybersoft.user.dto.UserDto;
