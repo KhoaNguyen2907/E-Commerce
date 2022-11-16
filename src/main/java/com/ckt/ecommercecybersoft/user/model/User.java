@@ -1,5 +1,6 @@
 package com.ckt.ecommercecybersoft.user.model;
 
+import com.ckt.ecommercecybersoft.address.model.AddressEntity;
 import com.ckt.ecommercecybersoft.common.entity.BaseEntity;
 import com.ckt.ecommercecybersoft.post.model.Comment;
 import com.ckt.ecommercecybersoft.post.model.Post;
@@ -9,6 +10,8 @@ import com.ckt.ecommercecybersoft.user.utils.UserExceptionUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
@@ -20,7 +23,9 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@ToString
+@ToString(exclude = "role")
+@SQLDelete(sql = "UPDATE users SET status = 'PERMANENTLY_BLOCKED' WHERE id = ?")
+@Where(clause = "status <> 'PERMANENTLY_BLOCKED'")
 @Table(name = UserColumn.TABLE_NAME)
 public class User extends BaseEntity {
     @Column(name = UserColumn.USERNAME,unique = true, nullable = false)
@@ -45,6 +50,10 @@ public class User extends BaseEntity {
     @Column(name = UserColumn.AVATAR)
     private String avatar;
 
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = UserColumn.ADDRESS)
+    private AddressEntity address;
+
     @Column(name = UserColumn.STATUS)
     @Enumerated(EnumType.STRING)
     private Status status;
@@ -52,7 +61,7 @@ public class User extends BaseEntity {
     @Column(name = UserColumn.EMAIL_VERIFIED)
     private boolean emailVerified = false;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE })
     @JoinColumn(name = UserColumn.ROLE_ID)
     private Role role;
 
@@ -61,6 +70,12 @@ public class User extends BaseEntity {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = PostEntity.UserMappedComment.USER_MAPPED_COMMENT)
     private Set<Comment> comments = new LinkedHashSet<>();
+
+    @PreRemove
+    private void preRemove() {
+        this.setStatus(Status.PERMANENTLY_BLOCKED);
+    }
+
 
     @Override
     public boolean equals(Object obj) {

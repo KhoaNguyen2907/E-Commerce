@@ -14,10 +14,10 @@ import java.util.UUID;
 
 @RequestMapping(value = OrderUrl.URL_ORDER)
 @RestController
-public class OrderSource {
+public class OrderResource {
     private final OrderService orderService;
 
-    public OrderSource(OrderService orderService) {
+    public OrderResource(OrderService orderService) {
         this.orderService = orderService;
     }
 

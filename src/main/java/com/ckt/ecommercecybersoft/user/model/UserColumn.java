@@ -14,4 +14,5 @@ public class UserColumn {
     public static final String ROLE_ID = "role_id";
     public static final String STATUS = "status";
     public static final String EMAIL_VERIFIED = "email_verified" ;
+    public static final String ADDRESS = "address_id";
 }
