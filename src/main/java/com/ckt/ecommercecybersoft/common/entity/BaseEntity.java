@@ -2,15 +2,11 @@ package com.ckt.ecommercecybersoft.common.entity;
 
 import com.ckt.ecommercecybersoft.common.utils.DateTimeUtils;
 import com.fasterxml.jackson.annotation.JsonFormat;
-
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import lombok.experimental.UtilityClass;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -23,6 +19,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
+
 @MappedSuperclass
 @Setter
 @Getter
@@ -35,6 +32,10 @@ public class BaseEntity implements Serializable {
     @GeneratedValue(generator = "UUID")
     @Column(name = Columns.ID)
     protected UUID id;
+
+    @Version
+    @Column(name = Columns.VERSION)
+    protected int version;
 
     @CreatedBy
     @Column(name = Columns.CREATED_BY, updatable = false)

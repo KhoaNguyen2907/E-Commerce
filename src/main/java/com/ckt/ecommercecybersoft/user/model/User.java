@@ -1,6 +1,9 @@
 package com.ckt.ecommercecybersoft.user.model;
 
 import com.ckt.ecommercecybersoft.common.entity.BaseEntity;
+import com.ckt.ecommercecybersoft.post.model.Comment;
+import com.ckt.ecommercecybersoft.post.model.Post;
+import com.ckt.ecommercecybersoft.post.model.PostEntity;
 import com.ckt.ecommercecybersoft.role.model.Role;
 import com.ckt.ecommercecybersoft.user.utils.UserExceptionUtils;
 import lombok.Getter;
@@ -11,6 +14,8 @@ import org.hibernate.validator.constraints.Length;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -50,6 +55,12 @@ public class User extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = UserColumn.ROLE_ID)
     private Role role;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = PostEntity.UserMappedPost.USER_MAPPED_POST)
+    private Set<Post> posts = new LinkedHashSet<>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = PostEntity.UserMappedComment.USER_MAPPED_COMMENT)
+    private Set<Comment> comments = new LinkedHashSet<>();
 
     @Override
     public boolean equals(Object obj) {
