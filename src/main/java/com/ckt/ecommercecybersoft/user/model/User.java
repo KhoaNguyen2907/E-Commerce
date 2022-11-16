@@ -1,6 +1,7 @@
 package com.ckt.ecommercecybersoft.user.model;
 
 import com.ckt.ecommercecybersoft.address.model.AddressEntity;
+import com.ckt.ecommercecybersoft.cart.model.CartItemEntity;
 import com.ckt.ecommercecybersoft.common.entity.BaseEntity;
 import com.ckt.ecommercecybersoft.order.model.OrderEntity;
 import com.ckt.ecommercecybersoft.post.model.Post;
@@ -69,6 +70,8 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Post> posts;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<CartItemEntity> cart;
 
 
     @PreRemove

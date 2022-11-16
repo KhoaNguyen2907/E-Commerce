@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 
 public interface CategoryService extends GenericService<CategoryEntity, CategoryDTO, UUID> {
+    CategoryDTO update(CategoryDTO categoryDTO);
 }
 
 @Service
@@ -31,5 +32,12 @@ class CategoryServiceImpl implements CategoryService {
     @Override
     public ProjectMapper getMapper() {
         return mapper;
+    }
+
+    @Override
+    public CategoryDTO update(CategoryDTO categoryDTO) {
+        CategoryEntity category = mapper.map(categoryDTO, CategoryEntity.class);
+        category = categoryRepository.save(category);
+        return mapper.map(category, CategoryDTO.class);
     }
 }

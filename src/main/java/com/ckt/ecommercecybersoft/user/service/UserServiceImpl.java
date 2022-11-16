@@ -16,7 +16,6 @@ import com.ckt.ecommercecybersoft.user.model.User;
 import com.ckt.ecommercecybersoft.user.repository.UserRepository;
 import com.ckt.ecommercecybersoft.user.utils.MailUtils;
 import com.ckt.ecommercecybersoft.user.utils.UserExceptionUtils;
-import org.hibernate.cache.spi.support.CacheUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,8 +23,6 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -206,10 +204,13 @@ public class UserServiceImpl implements UserService, Serializable {
     }
 
     @Override
-    public UserDto getCurrentUser() {
-        String username = SecurityUtils.getLoginUsername().orElseThrow(() -> new NotFoundException(UserExceptionUtils.USER_NOT_FOUND));
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new NotFoundException(UserExceptionUtils.USER_NOT_FOUND));
-        return getMapper().map(user, UserDto.class);
+    public Optional<UserDto> getCurrentUser() throws NotFoundException {
+        String username = SecurityUtils.getLoginUsername().orElseThrow(null);
+        if (username != null) {
+            User user = userRepository.findByUsername(username).orElseThrow(null);
+            return Optional.ofNullable(getMapper().map(user, UserDto.class));
+        }
+        return Optional.empty();
     }
 
     @Override

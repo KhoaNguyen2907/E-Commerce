@@ -1,10 +1,8 @@
 package com.ckt.ecommercecybersoft.product.dto;
 
 import lombok.*;
-import org.hibernate.validator.constraints.UniqueElements;
 
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import java.util.List;
 import java.util.UUID;
@@ -25,6 +23,7 @@ public class ProductDTO {
     @Min(value = 0, message = "{product.stock.min}")
     private int stock;
     private UUID brandId;
+    @NotEmpty(message = "{product.category.not.empty}")
     transient private List<UUID> categoryIds;
 }
 

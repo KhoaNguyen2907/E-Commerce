@@ -1,15 +1,19 @@
 package com.ckt.ecommercecybersoft.cart.service;
 
+import com.ckt.ecommercecybersoft.cart.constant.CartExceptionUtils;
+import com.ckt.ecommercecybersoft.cart.dto.CartItemDTO;
 import com.ckt.ecommercecybersoft.cart.dto.CartItemRequestDTO;
-import com.ckt.ecommercecybersoft.cart.model.CartItemEntity;
 import com.ckt.ecommercecybersoft.cart.dto.CartItemResponseDTO;
+import com.ckt.ecommercecybersoft.cart.model.CartItemEntity;
 import com.ckt.ecommercecybersoft.cart.repository.CartRepository;
 import com.ckt.ecommercecybersoft.common.exception.NotFoundException;
 import com.ckt.ecommercecybersoft.common.service.GenericService;
 import com.ckt.ecommercecybersoft.common.utils.ProjectMapper;
 import com.ckt.ecommercecybersoft.product.dto.ProductDTO;
+import com.ckt.ecommercecybersoft.product.model.ProductEntity;
 import com.ckt.ecommercecybersoft.product.service.ProductService;
-import com.ckt.ecommercecybersoft.user.model.User;
+import com.ckt.ecommercecybersoft.product.util.ProductExceptionUtils;
+import com.ckt.ecommercecybersoft.user.dto.UserDto;
 import com.ckt.ecommercecybersoft.user.service.UserService;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
@@ -20,12 +24,11 @@ import java.util.stream.Collectors;
 
 public interface CartService extends
         GenericService<CartItemEntity, CartItemResponseDTO, UUID> {
-    public List<CartItemResponseDTO> getAllCartItem();
+    List<CartItemResponseDTO> getAllCartItem();
 
-    public CartItemResponseDTO createCartItem(CartItemRequestDTO cartItemRequestDTO);
+    CartItemResponseDTO createCartItem(CartItemRequestDTO cartItemRequestDTO);
 
-    public CartItemResponseDTO saveCartItem(UUID cartId,
-                                            CartItemRequestDTO cartItemRequestDTO);
+    void deleteCartItem(UUID id);
 }
 
 @Service
@@ -47,61 +50,82 @@ class CartServiceImpl implements CartService {
         return cartRepository.findAll().stream()
                 .map(cartItemEntity -> {
                     return new CartItemResponseDTO(
-                            mapper.map(cartItemEntity.getProductEntity(), ProductDTO.class),
+                            mapper.map(cartItemEntity.getProduct(), ProductDTO.class),
                             cartItemEntity.getQuantity(),
                             cartItemEntity.getQuantity() *
-                                    cartItemEntity.getProductEntity().getPrice()
+                                    cartItemEntity.getProduct().getPrice()
                     );
                 })
                 .collect(Collectors.toList());
     }
 
     @Override
-    public CartItemResponseDTO createCartItem(
-            CartItemRequestDTO cartItemRequestDTO) {
-        UUID uuid = UUID.fromString("b2b5dd10-ac46-4445-aad0-5ad7b625480d");
-        List<CartItemEntity> users = cartRepository.findByUserIdAndProductId(
-                /*userService.getCurrentUser().getId(),*/
-                UUID.fromString("b2b5dd10-ac46-4445-aad0-5ad7b625480d"),
-                cartItemRequestDTO.getProductId()
-        );
-        if (cartItemRequestDTO.getQuantity() > 0) {
-            CartItemEntity cartItemTemp = CartItemEntity.builder()
-                    .user(userService.findById(UUID.fromString("64aca479-8d10-4ada-a8b2-da536cffa79e"))
-                            .orElse(null))
-                    .productEntity(productService.findById(cartItemRequestDTO.getProductId())
-                            .orElse(null))
-                    .quantity(cartItemRequestDTO.getQuantity())
-                    .build();
+    public CartItemResponseDTO createCartItem(CartItemRequestDTO cartItemRequestDTO) {
+//        UUID uuid = UUID.fromString("b2b5dd10-ac46-4445-aad0-5ad7b625480d");
+//        List<CartItemEntity> users = cartRepository.findByUserIdAndProductId(
+//                /*userService.getCurrentUser().getId(),*/
+//                UUID.fromString("b2b5dd10-ac46-4445-aad0-5ad7b625480d"),
+//                cartItemRequestDTO.getProductId()
+//        );
+//        if (cartItemRequestDTO.getQuantity() > 0) {
+//            CartItemEntity cartItemTemp = CartItemEntity.builder()
+//                    .user(userService.findById(UUID.fromString("64aca479-8d10-4ada-a8b2-da536cffa79e"))
+//                            .orElse(null))
+//                    .productEntity(productService.findById(cartItemRequestDTO.getProductId())
+//                            .orElse(null))
+//                    .quantity(cartItemRequestDTO.getQuantity())
+//                    .build();
+//
+//            CartItemEntity cartItemEntity = cartRepository.findByUserIdAndProductId(
+//                            /*userService.getCurrentUser().getId(),*/
+//                            UUID.fromString("b2b5dd10-ac46-4445-aad0-5ad7b625480d"),
+//                            cartItemRequestDTO.getProductId()
+//                    ).stream().findFirst().map(cartItem -> {
+//                        cartItem.setQuantity(cartItemTemp.getQuantity()
+//                                + cartItem.getQuantity());
+//                        return cartItem;
+//                    }).orElse(cartItemTemp);
+//            CartItemEntity savedCart = cartRepository.save(cartItemEntity);
+//
+//            return new CartItemResponseDTO(
+//                    mapper.map(savedCart.getProductEntity(), ProductDTO.class),
+//                    savedCart.getQuantity(),
+//                    savedCart.getQuantity() * savedCart.getProductEntity().getPrice()
+//            );
+//
+//        }
+//        return null;
+        CartItemDTO cartItemDTO = mapper.map(cartItemRequestDTO, CartItemDTO.class);
+        ProductEntity product = productService.findById(cartItemRequestDTO.getProductId())
+                .orElseThrow(() -> new NotFoundException(ProductExceptionUtils.PRODUCT_NOT_FOUND));
+        ProductDTO productDto = mapper.map(product, ProductDTO.class);
+        cartItemDTO.setProduct(productDto);
 
-            CartItemEntity cartItemEntity = cartRepository.findByUserIdAndProductId(
-                            /*userService.getCurrentUser().getId(),*/
-                            UUID.fromString("b2b5dd10-ac46-4445-aad0-5ad7b625480d"),
-                            cartItemRequestDTO.getProductId()
-                    ).stream().findFirst().map(cartItem -> {
-                        cartItem.setQuantity(cartItemTemp.getQuantity()
-                                + cartItem.getQuantity());
-                        return cartItem;
-                    }).orElse(cartItemTemp);
-            CartItemEntity savedCart = cartRepository.save(cartItemEntity);
-
-            return new CartItemResponseDTO(
-                    mapper.map(savedCart.getProductEntity(), ProductDTO.class),
-                    savedCart.getQuantity(),
-                    savedCart.getQuantity() * savedCart.getProductEntity().getPrice()
+        UserDto user = userService.getCurrentUser().orElse(null);
+        if (user != null) {
+            CartItemEntity cartItem = cartRepository.findByUserIdAndProductId(
+                    user.getId(),
+                    cartItemDTO.getProduct().getId()
             );
+
+            if (cartItem != null) {
+                cartItem.setQuantity(cartItemDTO.getQuantity());
+            } else {
+                cartItemDTO.setUser(user);
+                cartItem = mapper.map(cartItemDTO, CartItemEntity.class);
+            }
+
+            CartItemEntity savedCart = cartRepository.save(cartItem);
+            return mapper.map(savedCart, CartItemResponseDTO.class);
         }
-        return null;
+        return mapper.map(cartItemDTO, CartItemResponseDTO.class);
     }
 
+
     @Override
-    public CartItemResponseDTO saveCartItem(UUID cartId, CartItemRequestDTO cartItemRequestDTO) {
-        CartItemEntity cartItemEntity = cartRepository.findById(cartId)
-                .orElseThrow(() -> new NotFoundException("Cart item not found"));
-        return mapper.map(
-                cartRepository.save(cartItemEntity),
-                CartItemResponseDTO.class
-        );
+    public void deleteCartItem(UUID id) {
+       CartItemEntity cartItem = cartRepository.findById(id).orElseThrow(() -> new NotFoundException(CartExceptionUtils.CART_ITEM_NOT_FOUND));
+       cartRepository.deleteById(id);
     }
 
     @Override

@@ -17,4 +17,5 @@ public class UserUrlUtils {
     public static final String SEARCH_USER = "/search";
     public static final String GET_ORDERS = "/{id}/get-orders";
     public static final String GET_POSTS = "/{id}/get-posts";
+    public static final String GET_CART = "/{id}/get-cart";
 }

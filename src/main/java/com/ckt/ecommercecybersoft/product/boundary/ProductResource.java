@@ -9,8 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Arrays;
-import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
@@ -52,9 +50,7 @@ public class ProductResource {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateProduct(
-            @RequestBody ProductDTO productDTO
-            , @PathVariable UUID id) {
+    public ResponseEntity<?> updateProduct(@RequestBody ProductDTO productDTO, @PathVariable UUID id) {
         return ResponseUtils.get(
                 productService.updateProduct(productDTO, id),
                 HttpStatus.OK

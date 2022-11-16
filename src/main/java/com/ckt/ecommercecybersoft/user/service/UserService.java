@@ -7,6 +7,7 @@ import com.ckt.ecommercecybersoft.user.model.User;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -38,7 +39,7 @@ public interface UserService extends GenericService<User, UserDto, UUID> {
 
     boolean changePassword(UUID id, String oldPassword, String newPassword);
 
-    UserDto getCurrentUser();
+    Optional<UserDto> getCurrentUser();
 
     List<UserDto> searchUser(String keyword, Pageable pageable);
 }

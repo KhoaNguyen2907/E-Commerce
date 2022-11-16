@@ -1,5 +1,7 @@
 package com.ckt.ecommercecybersoft.user.controller;
 
+import com.ckt.ecommercecybersoft.cart.dto.CartItemResponseDTO;
+import com.ckt.ecommercecybersoft.common.exception.NotFoundException;
 import com.ckt.ecommercecybersoft.common.model.ResponseDTO;
 import com.ckt.ecommercecybersoft.common.utils.ProjectMapper;
 import com.ckt.ecommercecybersoft.common.utils.ResponseUtils;
@@ -17,6 +19,7 @@ import com.ckt.ecommercecybersoft.user.model.response.OperationStatus;
 import com.ckt.ecommercecybersoft.user.model.response.OperationStatusModel;
 import com.ckt.ecommercecybersoft.user.model.response.UserResponseModel;
 import com.ckt.ecommercecybersoft.user.service.UserService;
+import com.ckt.ecommercecybersoft.user.utils.UserExceptionUtils;
 import com.ckt.ecommercecybersoft.user.utils.UserUrlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,7 +80,7 @@ public class UserController {
     @GetMapping(path = UserUrlUtils.CURRENT_LOGIN_USER)
     public ResponseEntity<ResponseDTO> getCurrentUser() {
         logger.info("Get current user");
-        UserDto userDto = userService.getCurrentUser();
+        UserDto userDto = userService.getCurrentUser().orElseThrow(() -> new NotFoundException(UserExceptionUtils.USER_NOT_FOUND));
         UserResponseModel userResponseModel = mapper.map(userDto, UserResponseModel.class);
         return ResponseUtils.get(userResponseModel, HttpStatus.OK);
     }
@@ -91,7 +94,7 @@ public class UserController {
     @PutMapping
     public ResponseEntity<ResponseDTO> updateUserInfo(@Valid @RequestBody UserInfoModel user) {
         UserDto userDto = mapper.map(user, UserDto.class);
-        UserDto currentLoginUser = userService.getCurrentUser();
+        UserDto currentLoginUser = userService.getCurrentUser().orElseThrow(() -> new NotFoundException(UserExceptionUtils.USER_NOT_FOUND));
         userDto.setId(currentLoginUser.getId());
         userDto.setUsername(currentLoginUser.getUsername());
         logger.info("Update user id: {}. \n New user info: {}", userDto.getId(), userDto);
@@ -107,7 +110,7 @@ public class UserController {
      */
     @PutMapping(path = UserUrlUtils.CHANGE_PASSWORD)
     public ResponseEntity<ResponseDTO> changePassword(@Valid @RequestBody PasswordModel passwordModel) {
-        UserDto currentLoginUser = userService.getCurrentUser();
+        UserDto currentLoginUser = userService.getCurrentUser().orElseThrow(() -> new NotFoundException(UserExceptionUtils.USER_NOT_FOUND));
         passwordModel.setId(currentLoginUser.getId());
         logger.info("Change password for user id: {}", passwordModel.getId());
         boolean isChanged = userService.changePassword(passwordModel.getId(), passwordModel.getOldPassword(), passwordModel.getPassword());
@@ -264,7 +267,7 @@ public class UserController {
     public ResponseEntity<ResponseDTO> getOrders(@PathVariable UUID id, @RequestParam(defaultValue = "5") int pageSize, @RequestParam(defaultValue = "1") int pageNumber) {
         logger.info("Get orders of user id: {}", id);
         //if user is not admin, only get orders of current user
-        UserDto currentUser = userService.getCurrentUser();
+        UserDto currentUser = userService.getCurrentUser().orElseThrow(() -> new NotFoundException(UserExceptionUtils.USER_NOT_FOUND));
         if (!currentUser.getRole().getCode().equals("ADMIN")) {
             id = currentUser.getId();
         }
@@ -277,6 +280,17 @@ public class UserController {
         logger.info("Get posts of user id: {}", id);
         List<PostDTO> postDtoPage = userService.findUserById(id).getPosts().subList((pageNumber-1)*pageSize, pageNumber*pageSize);
         return ResponseUtils.get(postDtoPage, HttpStatus.OK);
+    }
+
+    @GetMapping(path = UserUrlUtils.GET_CART)
+    public ResponseEntity<ResponseDTO> getCart(@PathVariable UUID id) {
+        logger.info("Get cart of user id: {}", id);
+        UserDto currentUser = userService.getCurrentUser().orElseThrow(() -> new NotFoundException(UserExceptionUtils.USER_NOT_FOUND));
+        if (!currentUser.getRole().getCode().equals("ADMIN")) {
+            id = currentUser.getId();
+        }
+        List<CartItemResponseDTO> cartDTO = userService.findUserById(id).getCart();
+        return ResponseUtils.get(cartDTO, HttpStatus.OK);
     }
 
 }

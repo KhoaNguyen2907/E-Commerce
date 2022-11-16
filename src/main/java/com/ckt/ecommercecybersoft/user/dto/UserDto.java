@@ -1,7 +1,7 @@
 package com.ckt.ecommercecybersoft.user.dto;
 
 import com.ckt.ecommercecybersoft.address.dto.AddressDTO;
-import com.ckt.ecommercecybersoft.common.model.ResponseDTO;
+import com.ckt.ecommercecybersoft.cart.dto.CartItemResponseDTO;
 import com.ckt.ecommercecybersoft.order.dto.ResponseOrderDTO;
 import com.ckt.ecommercecybersoft.post.dto.PostDTO;
 import com.ckt.ecommercecybersoft.role.dto.RoleDto;
@@ -40,6 +40,8 @@ public class UserDto implements Serializable {
     private List<ResponseOrderDTO> orders;
 
     private List<PostDTO> posts;
+
+    private List<CartItemResponseDTO> cart;
 
     private User.Status status;
 

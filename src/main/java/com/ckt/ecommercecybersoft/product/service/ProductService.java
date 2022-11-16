@@ -9,14 +9,12 @@ import com.ckt.ecommercecybersoft.common.utils.ProjectMapper;
 import com.ckt.ecommercecybersoft.product.dto.ProductDTO;
 import com.ckt.ecommercecybersoft.product.model.ProductEntity;
 import com.ckt.ecommercecybersoft.product.repository.ProductRepository;
-import org.modelmapper.TypeMap;
 import org.springframework.context.MessageSource;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 import javax.validation.ValidationException;
 import java.util.List;
-import java.util.Locale;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -69,13 +67,18 @@ class ProductServiceImpl implements ProductService {
     @Override
     public ProductDTO updateProduct(ProductDTO productDTO, UUID id) {
 //        ProductEntity curProductEntity = productRepository.findById(id).orElse(null);
-        BrandEntity brandEntity =
-                brandService.findById(productDTO.getBrandId())
-                        .orElseThrow(() -> {
-                            return new ValidationException(
-                                    "Brand is not existed");
+        BrandEntity brandEntity;
+        if (productDTO.getBrandId() != null){
+             brandEntity =
+                    brandService.findById(productDTO.getBrandId())
+                            .orElseThrow(() -> {
+                                return new ValidationException(
+                                        "Brand is not existed");
+                            });
+        } else {
+            brandEntity = null;
+        }
 
-                        });
         ProductEntity curentProduct =
                 productRepository.findById(id).map(productEntity -> {
                             // Get Brand
