@@ -1,4 +1,4 @@
-package com.ckt.ecommercecybersoft.category;
+package com.ckt.ecommercecybersoft.category.controller;
 
 import com.ckt.ecommercecybersoft.category.dto.CategoryDTO;
 import com.ckt.ecommercecybersoft.category.model.CategoryEntity;

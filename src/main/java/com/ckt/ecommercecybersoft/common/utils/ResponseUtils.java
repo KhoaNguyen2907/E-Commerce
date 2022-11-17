@@ -129,7 +129,7 @@ public class ResponseUtils {
         boolean isContentArray = data != null && data.toString().charAt(0) == '[';
 
         return ResponseDTO.builder().content(data).hasErrors(hasError).errors(errorList)
-                .timestamp(DateTimeUtils.now()).status(status.value()).isContentArray(isContentArray).build();
+                .timestamp(DateTimeUtils.now()).status(status.value()).contentArray(isContentArray).build();
     }
 
 

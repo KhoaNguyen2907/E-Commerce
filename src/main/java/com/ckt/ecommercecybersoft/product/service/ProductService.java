@@ -12,6 +12,7 @@ import com.ckt.ecommercecybersoft.product.repository.ProductRepository;
 import org.springframework.context.MessageSource;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.ValidationException;
 import java.util.List;
@@ -25,6 +26,7 @@ public interface ProductService extends GenericService<ProductEntity, ProductDTO
 }
 
 @Service
+@Transactional
 class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final BrandService brandService;

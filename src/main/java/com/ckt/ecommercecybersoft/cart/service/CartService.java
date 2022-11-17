@@ -14,9 +14,14 @@ import com.ckt.ecommercecybersoft.product.model.ProductEntity;
 import com.ckt.ecommercecybersoft.product.service.ProductService;
 import com.ckt.ecommercecybersoft.product.util.ProductExceptionUtils;
 import com.ckt.ecommercecybersoft.user.dto.UserDto;
+import com.ckt.ecommercecybersoft.user.model.User;
 import com.ckt.ecommercecybersoft.user.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -26,17 +31,26 @@ public interface CartService extends
         GenericService<CartItemEntity, CartItemResponseDTO, UUID> {
     List<CartItemResponseDTO> getAllCartItem();
 
+    List<CartItemResponseDTO> getAllCartItemByUserId(UUID userId);
+
     CartItemResponseDTO createCartItem(CartItemRequestDTO cartItemRequestDTO);
 
     void deleteCartItem(UUID id);
+
+    void deleteCartItemByProductId(UUID id);
+
+
 }
 
 @Service
+@Transactional
 class CartServiceImpl implements CartService {
     private final ProjectMapper mapper;
     private final CartRepository cartRepository;
     private final UserService userService;
     private final ProductService productService;
+
+    public static final Logger logger = LoggerFactory.getLogger(CartServiceImpl.class);
 
     CartServiceImpl(ProjectMapper mapper, CartRepository cartRepository, UserService userService, ProductService productService) {
         this.mapper = mapper;
@@ -58,6 +72,12 @@ class CartServiceImpl implements CartService {
                 })
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<CartItemResponseDTO> getAllCartItemByUserId(UUID userId) {
+        return cartRepository.findByUserId(userId).stream().map(cartItem -> mapper.map(cartItem, CartItemResponseDTO.class)).collect(Collectors.toList());
+    }
+
 
     @Override
     public CartItemResponseDTO createCartItem(CartItemRequestDTO cartItemRequestDTO) {
@@ -100,18 +120,22 @@ class CartServiceImpl implements CartService {
                 .orElseThrow(() -> new NotFoundException(ProductExceptionUtils.PRODUCT_NOT_FOUND));
         ProductDTO productDto = mapper.map(product, ProductDTO.class);
         cartItemDTO.setProduct(productDto);
+        cartItemDTO.setTotalPrice(productDto.getPrice() * cartItemDTO.getQuantity());
+        logger.info("Cart item created: {}", cartItemDTO);
 
-        UserDto user = userService.getCurrentUser().orElse(null);
-        if (user != null) {
+        UserDto userDto = userService.getCurrentUser().orElse(null);
+
+        if (userDto != null) {
             CartItemEntity cartItem = cartRepository.findByUserIdAndProductId(
-                    user.getId(),
+                    userDto.getId(),
                     cartItemDTO.getProduct().getId()
             );
 
             if (cartItem != null) {
                 cartItem.setQuantity(cartItemDTO.getQuantity());
+                cartItem.setTotalPrice(cartItemDTO.getTotalPrice());
             } else {
-                cartItemDTO.setUser(user);
+                cartItemDTO.setUser(userDto);
                 cartItem = mapper.map(cartItemDTO, CartItemEntity.class);
             }
 
@@ -124,8 +148,13 @@ class CartServiceImpl implements CartService {
 
     @Override
     public void deleteCartItem(UUID id) {
-       CartItemEntity cartItem = cartRepository.findById(id).orElseThrow(() -> new NotFoundException(CartExceptionUtils.CART_ITEM_NOT_FOUND));
+       cartRepository.findById(id).orElseThrow(() -> new NotFoundException(CartExceptionUtils.CART_ITEM_NOT_FOUND));
        cartRepository.deleteById(id);
+    }
+
+    @Override
+    public void deleteCartItemByProductId(UUID productId) {
+        cartRepository.deleteByProductId(productId);
     }
 
     @Override

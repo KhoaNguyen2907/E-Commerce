@@ -73,7 +73,6 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<CartItemEntity> cart;
 
-
     @PreRemove
     private void preRemove() {
         this.setStatus(Status.PERMANENTLY_BLOCKED);

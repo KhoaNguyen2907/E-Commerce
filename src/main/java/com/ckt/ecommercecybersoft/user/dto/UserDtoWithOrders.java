@@ -1,15 +1,19 @@
 package com.ckt.ecommercecybersoft.user.dto;
 
 import com.ckt.ecommercecybersoft.address.dto.AddressDTO;
-import com.ckt.ecommercecybersoft.cart.dto.CartItemDTO;
-import com.ckt.ecommercecybersoft.cart.dto.CartItemResponseDTO;
+import com.ckt.ecommercecybersoft.order.constant.OrderConstant;
+import com.ckt.ecommercecybersoft.order.dto.OrderDTO;
 import com.ckt.ecommercecybersoft.order.dto.ResponseOrderDTO;
-import com.ckt.ecommercecybersoft.post.dto.PostDTO;
+import com.ckt.ecommercecybersoft.order.dto.ResponseOrderItemDTO;
+import com.ckt.ecommercecybersoft.order.model.OrderEntity;
+import com.ckt.ecommercecybersoft.post.model.Post;
 import com.ckt.ecommercecybersoft.role.dto.RoleDto;
 import com.ckt.ecommercecybersoft.user.model.User;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -18,10 +22,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
-public class UserDto implements Serializable {
-    private static final long serialVersionUID = 1L;
-
+public class UserDtoWithOrders {
     private UUID id;
 
     private String username;
@@ -38,6 +39,8 @@ public class UserDto implements Serializable {
 
     private RoleDto role;
 
+    private List<ResponseOrderDTO> orders;
+
     private User.Status status;
 
     private String emailVerificationToken;
@@ -51,6 +54,4 @@ public class UserDto implements Serializable {
     private LocalDateTime createdAt;
 
     private LocalDateTime lastModifiedAt;
-
-
 }

@@ -7,6 +7,7 @@ import com.ckt.ecommercecybersoft.common.service.GenericService;
 import com.ckt.ecommercecybersoft.common.utils.ProjectMapper;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -15,6 +16,7 @@ public interface CategoryService extends GenericService<CategoryEntity, Category
 }
 
 @Service
+@Transactional
 class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final ProjectMapper mapper;

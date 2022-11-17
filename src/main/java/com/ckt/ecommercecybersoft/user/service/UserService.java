@@ -2,7 +2,11 @@ package com.ckt.ecommercecybersoft.user.service;
 
 import com.ckt.ecommercecybersoft.common.service.GenericService;
 import com.ckt.ecommercecybersoft.role.dto.RoleDto;
+import com.ckt.ecommercecybersoft.user.controller.UserController;
 import com.ckt.ecommercecybersoft.user.dto.UserDto;
+import com.ckt.ecommercecybersoft.user.dto.UserDtoWithCart;
+import com.ckt.ecommercecybersoft.user.dto.UserDtoWithOrders;
+import com.ckt.ecommercecybersoft.user.dto.UserDtoWithPosts;
 import com.ckt.ecommercecybersoft.user.model.User;
 import org.springframework.data.domain.Pageable;
 
@@ -42,5 +46,11 @@ public interface UserService extends GenericService<User, UserDto, UUID> {
     Optional<UserDto> getCurrentUser();
 
     List<UserDto> searchUser(String keyword, Pageable pageable);
+
+    UserDtoWithCart getUserWithCart(UUID id);
+
+    UserDtoWithPosts getCurrentUserWithPosts(UUID id);
+
+    UserDtoWithOrders getUserWithOrders(UUID id);
 }
 

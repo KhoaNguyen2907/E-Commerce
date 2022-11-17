@@ -8,5 +8,6 @@ public class CartConstant {
     public class CartItem {
         public static final String CART_ITEM_TABLE = "cart_item";
         public static final String QUANTITY = "quantity";
+        public static final String TOTAL_PRICE = "total_price" ;
     }
 }

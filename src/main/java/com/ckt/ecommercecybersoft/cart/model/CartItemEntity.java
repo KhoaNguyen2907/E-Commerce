@@ -27,4 +27,7 @@ public class CartItemEntity extends BaseEntity {
 
     @Column(name = CartConstant.CartItem.QUANTITY)
     private int quantity;
+
+    @Column(name = CartConstant.CartItem.TOTAL_PRICE)
+    private long totalPrice;
 }

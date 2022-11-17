@@ -30,9 +30,12 @@ public class OrderEntity extends BaseEntity {
             cascade = CascadeType.ALL,
             orphanRemoval = true)
     private Set<OrderItem> orderItems = new HashSet<>();
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
     private AddressEntity address;
+
+    @Column(name = OrderConstant.Order.PHONE)
+    private String phone;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

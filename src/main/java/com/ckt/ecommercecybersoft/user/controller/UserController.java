@@ -1,9 +1,17 @@
 package com.ckt.ecommercecybersoft.user.controller;
 
+import com.ckt.ecommercecybersoft.cart.dto.CartItemDTO;
+import com.ckt.ecommercecybersoft.cart.dto.CartItemResponseDTO;
+import com.ckt.ecommercecybersoft.cart.service.CartService;
+import com.ckt.ecommercecybersoft.common.exception.ForbiddenException;
 import com.ckt.ecommercecybersoft.common.exception.NotFoundException;
 import com.ckt.ecommercecybersoft.common.model.ResponseDTO;
 import com.ckt.ecommercecybersoft.common.utils.ProjectMapper;
 import com.ckt.ecommercecybersoft.common.utils.ResponseUtils;
+import com.ckt.ecommercecybersoft.order.dto.ResponseOrderDTO;
+import com.ckt.ecommercecybersoft.order.service.OrderService;
+import com.ckt.ecommercecybersoft.post.dto.PostDTO;
+import com.ckt.ecommercecybersoft.post.service.PostService;
 import com.ckt.ecommercecybersoft.role.dto.RoleDto;
 import com.ckt.ecommercecybersoft.security.authorization.AdminOnly;
 import com.ckt.ecommercecybersoft.user.dto.UserDto;
@@ -26,6 +34,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.security.sasl.AuthenticationException;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
@@ -36,6 +45,12 @@ import java.util.stream.Collectors;
 public class UserController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private CartService cartService;
+    @Autowired
+    private OrderService orderService;
+    @Autowired
+    private PostService postService;;
     @Autowired
     private ProjectMapper mapper;
 
@@ -261,32 +276,33 @@ public class UserController {
     }
 
     @GetMapping(path = UserUrlUtils.GET_ORDERS)
-    public ResponseEntity<ResponseDTO> getOrders(@PathVariable UUID id, @RequestParam(defaultValue = "5") int pageSize, @RequestParam(defaultValue = "1") int pageNumber) {
+    public ResponseEntity<ResponseDTO> getOrders(@PathVariable UUID id, @RequestParam(defaultValue = "5") int pageSize, @RequestParam(defaultValue = "1") int pageNumber) throws AuthenticationException {
         logger.info("Get orders of user id: {}", id);
         //if user is not admin, only get orders of current user
-        UserDto currentUser = userService.getCurrentUser().orElseThrow(() -> new NotFoundException(UserExceptionUtils.USER_NOT_FOUND));
+        UserDto currentUser = userService.getCurrentUser().orElseThrow(() -> new ForbiddenException("Not login"));
         if (!currentUser.getRole().getCode().equals("ADMIN")) {
             id = currentUser.getId();
         }
-        List<ResponseOrderDTO> orderDtoPage = userService.findUserById(id).getOrders().subList((pageNumber-1)*pageSize, pageNumber*pageSize);
-        return ResponseUtils.get(orderDtoPage, HttpStatus.OK);
+        List<ResponseOrderDTO> responseOrderDTOs = userService.getUserWithOrders(id).getOrders();
+        return ResponseUtils.get(responseOrderDTOs, HttpStatus.OK);
     }
 
-    @GetMapping(path = UserUrlUtils.GET_POSTS)
-    public ResponseEntity<ResponseDTO> getPosts(@PathVariable UUID id, @RequestParam(defaultValue = "5") int pageSize, @RequestParam(defaultValue = "1") int pageNumber) {
-        logger.info("Get posts of user id: {}", id);
-        List<PostDTO> postDtoPage = userService.findUserById(id).getPosts().subList((pageNumber-1)*pageSize, pageNumber*pageSize);
-        return ResponseUtils.get(postDtoPage, HttpStatus.OK);
-    }
+//    @GetMapping(path = UserUrlUtils.GET_POSTS)
+//    public ResponseEntity<ResponseDTO> getPosts(@PathVariable UUID id, @RequestParam(defaultValue = "5") int pageSize, @RequestParam(defaultValue = "1") int pageNumber) {
+//        logger.info("Get posts of user id: {}", id);
+//        List<PostDTO> postDtoPage = userService.findUserById(id).getPosts().subList((pageNumber-1)*pageSize, pageNumber*pageSize);
+//        return ResponseUtils.get(postDtoPage, HttpStatus.OK);
+//    }
 
     @GetMapping(path = UserUrlUtils.GET_CART)
     public ResponseEntity<ResponseDTO> getCart(@PathVariable UUID id) {
-        logger.info("Get cart of user id: {}", id);
         UserDto currentUser = userService.getCurrentUser().orElseThrow(() -> new NotFoundException(UserExceptionUtils.USER_NOT_FOUND));
         if (!currentUser.getRole().getCode().equals("ADMIN")) {
             id = currentUser.getId();
         }
-        List<CartItemResponseDTO> cartDTO = userService.findUserById(id).getCart();
+        logger.info("Get cart of user id: {}", id);
+        List<CartItemResponseDTO> cartDTO = userService.getUserWithCart(id).getCart();
+        logger.info("Cart: {}", cartDTO);
         return ResponseUtils.get(cartDTO, HttpStatus.OK);
     }
 

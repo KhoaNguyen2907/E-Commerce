@@ -12,6 +12,9 @@ import com.ckt.ecommercecybersoft.security.jwt.JwtUtils;
 import com.ckt.ecommercecybersoft.security.utils.SecurityUtils;
 import com.ckt.ecommercecybersoft.user.controller.UserController;
 import com.ckt.ecommercecybersoft.user.dto.UserDto;
+import com.ckt.ecommercecybersoft.user.dto.UserDtoWithCart;
+import com.ckt.ecommercecybersoft.user.dto.UserDtoWithOrders;
+import com.ckt.ecommercecybersoft.user.dto.UserDtoWithPosts;
 import com.ckt.ecommercecybersoft.user.model.User;
 import com.ckt.ecommercecybersoft.user.repository.UserRepository;
 import com.ckt.ecommercecybersoft.user.utils.MailUtils;
@@ -205,9 +208,9 @@ public class UserServiceImpl implements UserService, Serializable {
 
     @Override
     public Optional<UserDto> getCurrentUser() throws NotFoundException {
-        String username = SecurityUtils.getLoginUsername().orElseThrow(null);
-        if (username != null) {
-            User user = userRepository.findByUsername(username).orElseThrow(null);
+        String username = SecurityUtils.getLoginUsername().orElse(null);
+        if (username != null && !username.equals("anonymousUser")) {
+            User user = userRepository.findByUsername(username).orElse(null);
             return Optional.ofNullable(getMapper().map(user, UserDto.class));
         }
         return Optional.empty();
@@ -220,6 +223,24 @@ public class UserServiceImpl implements UserService, Serializable {
             return null;
         }
         return users.stream().map(user -> getMapper().map(user, UserDto.class)).collect(Collectors.toList());
+    }
+
+    @Override
+    public UserDtoWithCart getUserWithCart(UUID id) {
+        User user = userRepository.findUserWithCartById(id).orElseThrow(() -> new NotFoundException(UserExceptionUtils.USER_NOT_FOUND));
+        return getMapper().map(user, UserDtoWithCart.class);
+    }
+
+    @Override
+    public UserDtoWithPosts getCurrentUserWithPosts(UUID id) {
+        User user = userRepository.findUserWithPostsById(id).orElseThrow(() -> new NotFoundException(UserExceptionUtils.USER_NOT_FOUND));
+        return getMapper().map(user, UserDtoWithPosts.class);
+    }
+
+    @Override
+    public UserDtoWithOrders getUserWithOrders(UUID id) {
+        User user = userRepository.findUserWithOrdersById(id).orElseThrow(() -> new NotFoundException(UserExceptionUtils.USER_NOT_FOUND));
+        return getMapper().map(user, UserDtoWithOrders.class);
     }
 
     /**
@@ -282,4 +303,7 @@ public class UserServiceImpl implements UserService, Serializable {
         }
         return null;
     }
+
+
+
 }
