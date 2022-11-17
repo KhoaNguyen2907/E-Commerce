@@ -1,14 +1,9 @@
 package com.ckt.ecommercecybersoft.order.model;
 
-import com.ckt.ecommercecybersoft.common.entity.BaseEntity;
 import com.ckt.ecommercecybersoft.order.constant.OrderConstant;
-import com.ckt.ecommercecybersoft.product.model.ProductCategoryEntity;
 import com.ckt.ecommercecybersoft.product.model.ProductEntity;
-import com.ckt.ecommercecybersoft.product.util.ProductCategoryUtil;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -20,14 +15,20 @@ import java.util.Objects;
 public class OrderItem {
     @EmbeddedId
     private OrderItemId orderItemId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("productEntityId")
+    @JoinColumn(name = "product_id")
     private ProductEntity productEntity;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId(value = "orderEntityId")
+    @JoinColumn(name = "order_id")
     private OrderEntity orderEntity;
+
     @Column(name = OrderConstant.OrderItem.QUANTITY)
     private int quantity;
+
     @Column(name = OrderConstant.OrderItem.COST)
     private long cost;
 

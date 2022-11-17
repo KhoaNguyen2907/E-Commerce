@@ -2,9 +2,8 @@ package com.ckt.ecommercecybersoft.user.model;
 
 import com.ckt.ecommercecybersoft.address.model.AddressEntity;
 import com.ckt.ecommercecybersoft.common.entity.BaseEntity;
-import com.ckt.ecommercecybersoft.post.model.Comment;
+import com.ckt.ecommercecybersoft.order.model.OrderEntity;
 import com.ckt.ecommercecybersoft.post.model.Post;
-import com.ckt.ecommercecybersoft.post.model.PostEntity;
 import com.ckt.ecommercecybersoft.role.model.Role;
 import com.ckt.ecommercecybersoft.user.utils.UserExceptionUtils;
 import lombok.Getter;
@@ -17,8 +16,7 @@ import org.hibernate.validator.constraints.Length;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.List;
 
 @Getter
 @Setter
@@ -65,6 +63,12 @@ public class User extends BaseEntity {
     @JoinColumn(name = UserColumn.ROLE_ID)
     private Role role;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    private List<OrderEntity> orders;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<CartItemEntity> cart;
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = PostEntity.UserMappedPost.USER_MAPPED_POST)
     private Set<Post> posts = new LinkedHashSet<>();
 
@@ -75,7 +79,6 @@ public class User extends BaseEntity {
     private void preRemove() {
         this.setStatus(Status.PERMANENTLY_BLOCKED);
     }
-
 
     @Override
     public boolean equals(Object obj) {

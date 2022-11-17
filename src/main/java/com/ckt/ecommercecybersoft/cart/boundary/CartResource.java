@@ -4,12 +4,12 @@ import com.ckt.ecommercecybersoft.cart.constant.CartUrl;
 import com.ckt.ecommercecybersoft.cart.dto.CartItemRequestDTO;
 import com.ckt.ecommercecybersoft.cart.dto.CartItemResponseDTO;
 import com.ckt.ecommercecybersoft.cart.service.CartService;
+import com.ckt.ecommercecybersoft.common.model.ResponseDTO;
 import com.ckt.ecommercecybersoft.common.utils.ResponseUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RequestMapping(CartUrl.URL_CART)
@@ -21,28 +21,22 @@ public class CartResource {
         this.cartService = cartService;
     }
 
-    @GetMapping
-    public List<CartItemResponseDTO> getCartItem() {
-        return cartService.getAllCartItem();
-    }
-
+    /**
+     * Add item to user cart, if item already exists, update quantity. If no user is logged in, just return the item for frond end to handle.
+     * @param cartItemRequestDTO item to add to user cart, include product and quantity
+     * @return item added with user or just the item if no user is logged in
+     */
     @PostMapping
-    public ResponseEntity<?> createCartItem(
+    public ResponseEntity<ResponseDTO> addCartItem(
             @RequestBody CartItemRequestDTO cartItemRequestDTO) {
-        return ResponseUtils.get(
-                cartService.createCartItem(cartItemRequestDTO),
-                HttpStatus.CREATED
-        );
+        CartItemResponseDTO cartItemResponseDTO = cartService.createCartItem(cartItemRequestDTO);
+        return ResponseUtils.get(cartItemResponseDTO, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{cartId}")
-    public ResponseEntity<?> updateCartItem(
-            @RequestBody CartItemRequestDTO cartItemRequestDTO,
-            @PathVariable UUID cartId
-    ) {
-        return ResponseUtils.get(
-                cartService.saveCartItem(cartId, cartItemRequestDTO),
-                HttpStatus.CREATED
-        );
+    @DeleteMapping(value = CartUrl.BY_ID)
+    public ResponseEntity<ResponseDTO> deleteCartItem(
+            @PathVariable UUID id) {
+        cartService.deleteCartItem(id);
+        return ResponseUtils.get(null, HttpStatus.NO_CONTENT);
     }
 }

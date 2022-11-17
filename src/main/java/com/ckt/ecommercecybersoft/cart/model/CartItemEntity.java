@@ -17,14 +17,17 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Table(name = CartConstant.CartItem.CART_ITEM_TABLE)
 public class CartItemEntity extends BaseEntity {
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
-    private ProductEntity productEntity;
+    private ProductEntity product;
 
     @Column(name = CartConstant.CartItem.QUANTITY)
     private int quantity;
+
+    @Column(name = CartConstant.CartItem.TOTAL_PRICE)
+    private long totalPrice;
 }

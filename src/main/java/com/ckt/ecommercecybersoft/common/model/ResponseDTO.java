@@ -1,5 +1,6 @@
 package com.ckt.ecommercecybersoft.common.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import java.util.List;
@@ -13,6 +14,7 @@ public class ResponseDTO {
     private boolean hasErrors;
     private List<Error> errors;
     private long timestamp;
-    private boolean isContentArray;
+    @JsonProperty("isContentArray")
+    private boolean contentArray;
     private int status;
 }

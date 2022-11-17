@@ -2,6 +2,7 @@ package com.ckt.ecommercecybersoft.category.dto;
 
 import lombok.*;
 
+import javax.validation.constraints.NotBlank;
 import java.util.UUID;
 
 @Getter
@@ -11,5 +12,6 @@ import java.util.UUID;
 @AllArgsConstructor
 public class CategoryDTO {
     private UUID id;
+    @NotBlank (message = "Name is required")
     private String title;
 }

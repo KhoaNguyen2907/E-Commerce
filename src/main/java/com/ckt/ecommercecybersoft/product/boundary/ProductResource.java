@@ -1,44 +1,43 @@
 package com.ckt.ecommercecybersoft.product.boundary;
 
+import com.ckt.ecommercecybersoft.common.model.ResponseDTO;
+import com.ckt.ecommercecybersoft.common.utils.ProjectMapper;
 import com.ckt.ecommercecybersoft.common.utils.ResponseUtils;
 import com.ckt.ecommercecybersoft.product.dto.ProductDTO;
 import com.ckt.ecommercecybersoft.product.service.ProductService;
 import com.ckt.ecommercecybersoft.product.util.UrlUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Arrays;
-import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
 @RestController
 @RequestMapping(UrlUtil.URL_PRODUCT)
 public class ProductResource {
+    @Autowired
     private ProductService productService;
-
-    public ProductResource(ProductService productService) {
-        this.productService = productService;
-    }
+    @Autowired
+    ProjectMapper mapper;
 
     @GetMapping
-    public @ResponseBody List<ProductDTO> getAllProductDto() {
+    public ResponseEntity<ResponseDTO> getAllProductDto() {
         List<ProductDTO> productDTOs = productService.findAllDto(ProductDTO.class);
-//        productDTOs.forEach(product -> {
-//            String thumbUrl = product.getThumbnailUrl();
-//            if(thumbUrl != null && !thumbUrl.isEmpty()) {
-//                thumbUrl = Base64.getUrlEncoder().encodeToString(thumbUrl.getBytes());
-//                product.setThumbnailUrl(thumbUrl);
-//            }
-//        });
-        return productDTOs;
-//        return Arrays.asList("Hello, world") ;
+        return ResponseUtils.get(productDTOs, HttpStatus.OK);
     }
 
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<ResponseDTO> getProductById(@PathVariable UUID id) {
+        ProductDTO productDTO = mapper.map(productService.findById(id), ProductDTO.class);
+        return ResponseUtils.get(productDTO, HttpStatus.OK);
+    }
+
+
     @PostMapping
-    public ResponseEntity<?> saveProduct(@RequestBody @Valid ProductDTO productDTO){
+    public ResponseEntity<ResponseDTO> saveProduct(@RequestBody @Valid ProductDTO productDTO){
 //        String thumbUrl = productDTO.getThumbnailUrl();
 //        if(thumbUrl != null && !thumbUrl.isEmpty()) {
 //            thumbUrl = Base64.getUrlEncoder().encodeToString(thumbUrl.getBytes());
@@ -52,9 +51,7 @@ public class ProductResource {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateProduct(
-            @RequestBody ProductDTO productDTO
-            , @PathVariable UUID id) {
+    public ResponseEntity<ResponseDTO> updateProduct(@RequestBody ProductDTO productDTO, @PathVariable UUID id) {
         return ResponseUtils.get(
                 productService.updateProduct(productDTO, id),
                 HttpStatus.OK
@@ -62,7 +59,7 @@ public class ProductResource {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteProduct(@PathVariable UUID id){
+    public ResponseEntity<ResponseDTO> deleteProduct(@PathVariable UUID id){
         productService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }

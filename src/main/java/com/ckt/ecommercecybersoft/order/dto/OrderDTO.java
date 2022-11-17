@@ -1,7 +1,8 @@
 package com.ckt.ecommercecybersoft.order.dto;
 
 import com.ckt.ecommercecybersoft.address.dto.AddressDTO;
-import com.ckt.ecommercecybersoft.user.model.response.UserSimpleInfoModel;
+import com.ckt.ecommercecybersoft.order.model.OrderEntity;
+import com.ckt.ecommercecybersoft.user.dto.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,16 +10,16 @@ import lombok.Setter;
 
 import java.util.List;
 
-@Setter
 @Getter
-@NoArgsConstructor
+@Setter
 @AllArgsConstructor
-public class ResponseOrderDTO {
+@NoArgsConstructor
+public class OrderDTO {
     private AddressDTO address;
     private String comment;
-    private String status;
     private String phone;
+    private OrderEntity.Status status;
     private long totalCost;
-    private List<ResponseOrderItemDTO> orderItems;
-    private UserSimpleInfoModel user;
+    private List<OrderItemDto> orderItems;
+    private UserDto user;
 }
