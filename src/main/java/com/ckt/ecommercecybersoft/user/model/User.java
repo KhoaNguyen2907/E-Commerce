@@ -64,7 +64,7 @@ public class User extends BaseEntity {
     @JoinColumn(name = UserColumn.ROLE_ID)
     private Role role;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private List<OrderEntity> orders;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

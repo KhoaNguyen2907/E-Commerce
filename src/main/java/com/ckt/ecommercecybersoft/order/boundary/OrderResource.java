@@ -3,7 +3,6 @@ package com.ckt.ecommercecybersoft.order.boundary;
 import com.ckt.ecommercecybersoft.common.model.ResponseDTO;
 import com.ckt.ecommercecybersoft.common.utils.ProjectMapper;
 import com.ckt.ecommercecybersoft.common.utils.ResponseUtils;
-import com.ckt.ecommercecybersoft.order.constant.OrderConstant;
 import com.ckt.ecommercecybersoft.order.constant.OrderUrl;
 import com.ckt.ecommercecybersoft.order.dto.OrderDTO;
 import com.ckt.ecommercecybersoft.order.dto.RequestOrderDTO;
@@ -15,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RequestMapping(value = OrderUrl.URL_ORDER)
@@ -33,7 +31,6 @@ public class OrderResource {
                 .map(orderDTO -> mapper.map(orderDTO, ResponseOrderDTO.class))
                 .collect(Collectors.toList());
         return ResponseUtils.get(responseOrderDTOs,HttpStatus.OK);
-
     }
 
     @PostMapping

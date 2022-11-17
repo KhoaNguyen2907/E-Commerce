@@ -20,6 +20,6 @@ public class OrderDTO {
     private String phone;
     private OrderEntity.Status status;
     private long totalCost;
-    private List<OrderItemDto> orderItemDTOs;
+    private List<OrderItemDto> orderItems;
     private UserDto user;
 }

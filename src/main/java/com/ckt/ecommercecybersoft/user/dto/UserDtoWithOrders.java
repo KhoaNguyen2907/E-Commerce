@@ -1,12 +1,7 @@
 package com.ckt.ecommercecybersoft.user.dto;
 
 import com.ckt.ecommercecybersoft.address.dto.AddressDTO;
-import com.ckt.ecommercecybersoft.order.constant.OrderConstant;
-import com.ckt.ecommercecybersoft.order.dto.OrderDTO;
-import com.ckt.ecommercecybersoft.order.dto.ResponseOrderDTO;
-import com.ckt.ecommercecybersoft.order.dto.ResponseOrderItemDTO;
-import com.ckt.ecommercecybersoft.order.model.OrderEntity;
-import com.ckt.ecommercecybersoft.post.model.Post;
+import com.ckt.ecommercecybersoft.order.model.OrderSimpleInfoModel;
 import com.ckt.ecommercecybersoft.role.dto.RoleDto;
 import com.ckt.ecommercecybersoft.user.model.User;
 import lombok.AllArgsConstructor;
@@ -39,7 +34,7 @@ public class UserDtoWithOrders {
 
     private RoleDto role;
 
-    private List<ResponseOrderDTO> orders;
+    private List<OrderSimpleInfoModel> orders;
 
     private User.Status status;
 

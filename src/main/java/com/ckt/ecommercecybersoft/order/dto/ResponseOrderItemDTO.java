@@ -1,7 +1,6 @@
 package com.ckt.ecommercecybersoft.order.dto;
 
-import com.ckt.ecommercecybersoft.product.dto.ProductDTO;
-import com.ckt.ecommercecybersoft.product.model.ProductEntity;
+import com.ckt.ecommercecybersoft.product.model.ProductSimpleInfoModel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +11,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ResponseOrderItemDTO {
-    private ProductDTO productDTO;
+    private ProductSimpleInfoModel product;
     private int quantity;
 }

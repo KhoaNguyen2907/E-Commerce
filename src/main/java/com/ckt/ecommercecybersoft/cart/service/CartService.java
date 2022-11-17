@@ -14,12 +14,10 @@ import com.ckt.ecommercecybersoft.product.model.ProductEntity;
 import com.ckt.ecommercecybersoft.product.service.ProductService;
 import com.ckt.ecommercecybersoft.product.util.ProductExceptionUtils;
 import com.ckt.ecommercecybersoft.user.dto.UserDto;
-import com.ckt.ecommercecybersoft.user.model.User;
 import com.ckt.ecommercecybersoft.user.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,16 +27,13 @@ import java.util.stream.Collectors;
 
 public interface CartService extends
         GenericService<CartItemEntity, CartItemResponseDTO, UUID> {
-    List<CartItemResponseDTO> getAllCartItem();
+//    List<CartItemResponseDTO> getAllCartItem();
 
-    List<CartItemResponseDTO> getAllCartItemByUserId(UUID userId);
+    List<CartItemDTO> getAllCartItemByUserId(UUID userId);
 
     CartItemResponseDTO createCartItem(CartItemRequestDTO cartItemRequestDTO);
 
     void deleteCartItem(UUID id);
-
-    void deleteCartItemByProductId(UUID id);
-
 
 }
 
@@ -59,23 +54,23 @@ class CartServiceImpl implements CartService {
         this.productService = productService;
     }
 
-    @Override
-    public List<CartItemResponseDTO> getAllCartItem() {
-        return cartRepository.findAll().stream()
-                .map(cartItemEntity -> {
-                    return new CartItemResponseDTO(
-                            mapper.map(cartItemEntity.getProduct(), ProductDTO.class),
-                            cartItemEntity.getQuantity(),
-                            cartItemEntity.getQuantity() *
-                                    cartItemEntity.getProduct().getPrice()
-                    );
-                })
-                .collect(Collectors.toList());
-    }
+//    @Override
+//    public List<CartItemResponseDTO> getAllCartItem() {
+//        return cartRepository.findAll().stream()
+//                .map(cartItemEntity -> {
+//                    return new CartItemResponseDTO(
+//                            mapper.map(cartItemEntity.getProduct(), ProductDTO.class),
+//                            cartItemEntity.getQuantity(),
+//                            cartItemEntity.getQuantity() *
+//                                    cartItemEntity.getProduct().getPrice()
+//                    );
+//                })
+//                .collect(Collectors.toList());
+//    }
 
     @Override
-    public List<CartItemResponseDTO> getAllCartItemByUserId(UUID userId) {
-        return cartRepository.findByUserId(userId).stream().map(cartItem -> mapper.map(cartItem, CartItemResponseDTO.class)).collect(Collectors.toList());
+    public List<CartItemDTO> getAllCartItemByUserId(UUID userId) {
+        return cartRepository.findByUserId(userId).stream().map(cartItem -> mapper.map(cartItem, CartItemDTO.class)).collect(Collectors.toList());
     }
 
 
@@ -150,11 +145,6 @@ class CartServiceImpl implements CartService {
     public void deleteCartItem(UUID id) {
        cartRepository.findById(id).orElseThrow(() -> new NotFoundException(CartExceptionUtils.CART_ITEM_NOT_FOUND));
        cartRepository.deleteById(id);
-    }
-
-    @Override
-    public void deleteCartItemByProductId(UUID productId) {
-        cartRepository.deleteByProductId(productId);
     }
 
     @Override

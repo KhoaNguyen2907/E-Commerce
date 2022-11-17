@@ -1,6 +1,6 @@
 package com.ckt.ecommercecybersoft.order.service;
 
-import com.ckt.ecommercecybersoft.cart.dto.CartItemResponseDTO;
+import com.ckt.ecommercecybersoft.cart.dto.CartItemDTO;
 import com.ckt.ecommercecybersoft.cart.service.CartService;
 import com.ckt.ecommercecybersoft.common.exception.NotFoundException;
 import com.ckt.ecommercecybersoft.common.service.GenericService;
@@ -10,11 +10,14 @@ import com.ckt.ecommercecybersoft.order.dto.OrderItemDto;
 import com.ckt.ecommercecybersoft.order.dto.RequestOrderDTO;
 import com.ckt.ecommercecybersoft.order.dto.ResponseOrderDTO;
 import com.ckt.ecommercecybersoft.order.model.OrderEntity;
+import com.ckt.ecommercecybersoft.order.model.OrderItem;
+import com.ckt.ecommercecybersoft.order.repository.OrderItemRepository;
 import com.ckt.ecommercecybersoft.order.repository.OrderRepository;
+import com.ckt.ecommercecybersoft.product.model.ProductEntity;
 import com.ckt.ecommercecybersoft.product.service.ProductService;
 import com.ckt.ecommercecybersoft.user.dto.UserDto;
 import com.ckt.ecommercecybersoft.user.service.UserService;
-import org.springframework.data.domain.Pageable;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,18 +37,21 @@ public interface OrderService extends
 class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final ProjectMapper mapper;
-
     private final UserService userService;
     private final CartService cartService;
+    private final ProductService productService;
+    @Autowired
+    private OrderItemRepository orderItemRepository;
 
     public OrderServiceImpl(OrderRepository orderRepository,
                             ProjectMapper mapper,
                             UserService userService,
-                            CartService cartService) {
+                            CartService cartService, ProductService productService) {
         this.orderRepository = orderRepository;
         this.mapper = mapper;
         this.userService = userService;
         this.cartService = cartService;
+        this.productService = productService;
     }
 
 
@@ -66,25 +72,33 @@ class OrderServiceImpl implements OrderService {
         //Set user if user is logged in
         orderDto.setUser(userDto);
 
-        List<OrderItemDto> orderItemDtos = requestOrderDTO.getOrderItemDTOs().stream().map(oid -> {
-            OrderItemDto orderItemDto = mapper.map(oid, OrderItemDto.class);
-            orderItemDto.getProduct().setId(oid.getProductId());
-            return orderItemDto;
-        }).collect(Collectors.toList());
-        orderDto.setOrderItemDTOs(orderItemDtos);
-
         //set status
         orderDto.setStatus(OrderEntity.Status.SUCCESS);
 
-        //set total price
-        long total = orderDto.getOrderItemDTOs().stream().mapToLong(item -> item.getQuantity() * item.getProduct().getPrice()).sum();
-        orderDto.setTotalCost(total);
-        OrderDTO savedOrder = save(orderDto, OrderEntity.class);
+        OrderEntity order = mapper.map(orderDto, OrderEntity.class);
+        order.getOrderItems().clear();
+        List<OrderItemDto> orderItemDtos = requestOrderDTO.getOrderItems().stream().map(oid -> {
+            OrderItemDto orderItemDto = mapper.map(oid, OrderItemDto.class);
+            ProductEntity product = productService.findById(oid.getProductId()).orElseThrow(() -> new NotFoundException("099 Product not found"));
+            orderItemDto.setProduct(product);
 
-        if (userDto != null) {
-            List<CartItemResponseDTO> cart = cartService.getAllCartItemByUserId(userDto.getId());
-            cart.forEach(item -> cartService.deleteCartItemByProductId(item.getProduct().getId()));
-        }
+            if (userDto != null) {
+                List<CartItemDTO> cart = cartService.getAllCartItemByUserId(userDto.getId());
+                cart.forEach(cartItem -> {
+                    if (cartItem.getProduct().getId().equals(oid.getProductId())) {
+                        cartService.deleteCartItem(cartItem.getId());
+                    }
+                });
+            }
+            order.addOrderItem(mapper.map(orderItemDto, OrderItem.class));
+            return orderItemDto;
+        }).collect(Collectors.toList());
+
+        //set total price
+        long total = orderItemDtos.stream().mapToLong(item -> item.getQuantity() * item.getProduct().getPrice()).sum();
+        order.setTotalCost(total);
+
+        OrderDTO savedOrder = mapper.map(orderRepository.save(order), OrderDTO.class);
 
         return mapper.map(savedOrder, ResponseOrderDTO.class);
 

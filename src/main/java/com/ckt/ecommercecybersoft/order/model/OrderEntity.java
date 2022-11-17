@@ -3,14 +3,13 @@ package com.ckt.ecommercecybersoft.order.model;
 import com.ckt.ecommercecybersoft.address.model.AddressEntity;
 import com.ckt.ecommercecybersoft.common.entity.BaseEntity;
 import com.ckt.ecommercecybersoft.order.constant.OrderConstant;
-import com.ckt.ecommercecybersoft.product.model.ProductEntity;
 import com.ckt.ecommercecybersoft.user.model.User;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.LinkedList;
+import java.util.List;
 
 @Setter
 @Getter
@@ -27,9 +26,9 @@ public class OrderEntity extends BaseEntity {
     @Column(name = OrderConstant.Order.TOTAL_COST)
     private long totalCost;
     @OneToMany(mappedBy = "orderEntity",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true)
-    private Set<OrderItem> orderItems = new HashSet<>();
+            cascade = CascadeType.ALL)
+    private List<OrderItem> orderItems = new LinkedList<>();
+
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
     private AddressEntity address;
@@ -37,7 +36,7 @@ public class OrderEntity extends BaseEntity {
     @Column(name = OrderConstant.Order.PHONE)
     private String phone;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -46,12 +45,11 @@ public class OrderEntity extends BaseEntity {
         return status.getStatus();
     }
 
-    public OrderEntity addProduct(ProductEntity product, int quantity) {
-        OrderItem orderItem = new OrderItem(product, this, quantity);
+    public void addOrderItem(OrderItem orderItem) {
         this.orderItems.add(orderItem);
+        orderItem.setOrderEntity(this);
 //        this.productCategoryEntities.add(productCategoryEntity);
 //        categoryEntity.getProductCategoryEntities().add(productCategoryEntity);
-        return this;
     }
 
 //    public void removeCategory() {

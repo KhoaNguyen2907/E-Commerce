@@ -1,12 +1,9 @@
 package com.ckt.ecommercecybersoft.order.dto;
 
 import com.ckt.ecommercecybersoft.address.dto.AddressDTO;
-import com.ckt.ecommercecybersoft.order.model.OrderEntity;
 import lombok.*;
 
 import java.util.List;
-
-import static com.ckt.ecommercecybersoft.order.model.OrderEntity.*;
 
 @Setter
 @Getter
@@ -18,7 +15,7 @@ public class RequestOrderDTO {
     private String comment;
     private String phone;
     private long totalCost;
-    private List<RequestOrderItemDTO> orderItemDTOs;
+    private List<RequestOrderItemDTO> orderItems;
 
 //    public Status getStatus() {
 //        System.out.println("status: " + status.toUpperCase());
