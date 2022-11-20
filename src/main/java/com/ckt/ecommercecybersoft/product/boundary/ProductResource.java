@@ -33,7 +33,7 @@ public class ProductResource {
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<ResponseDTO> getProductById(@PathVariable UUID id) {
-        ProductDTO productDTO = mapper.map(productService.findById(id), ProductDTO.class);
+        ProductDTO productDTO = productService.findProductById(id);
         return ResponseUtils.get(productDTO, HttpStatus.OK);
     }
 
