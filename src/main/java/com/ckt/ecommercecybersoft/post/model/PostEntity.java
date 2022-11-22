@@ -12,6 +12,7 @@ public class PostEntity {
         public static final String SUBTITLE = "E_SUBTITLE";
         public static final String CODE = "E_CODE";
         public static final String CONTENT = "E_CONTENT";
+        public static final String IMAGEURL = "E_IMAGEURL";
     }
 
     @UtilityClass

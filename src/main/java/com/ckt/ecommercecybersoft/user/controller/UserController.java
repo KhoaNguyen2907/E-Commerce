@@ -9,6 +9,7 @@ import com.ckt.ecommercecybersoft.common.utils.ProjectMapper;
 import com.ckt.ecommercecybersoft.common.utils.ResponseUtils;
 import com.ckt.ecommercecybersoft.order.model.OrderSimpleInfoModel;
 import com.ckt.ecommercecybersoft.order.service.OrderService;
+import com.ckt.ecommercecybersoft.post.dto.PostDTO;
 import com.ckt.ecommercecybersoft.post.service.PostService;
 import com.ckt.ecommercecybersoft.role.dto.RoleDto;
 import com.ckt.ecommercecybersoft.security.authorization.AdminOnly;
@@ -285,12 +286,14 @@ public class UserController {
         return ResponseUtils.get(orderDTOs, HttpStatus.OK);
     }
 
-//    @GetMapping(path = UserUrlUtils.GET_POSTS)
-//    public ResponseEntity<ResponseDTO> getPosts(@PathVariable UUID id, @RequestParam(defaultValue = "5") int pageSize, @RequestParam(defaultValue = "1") int pageNumber) {
-//        logger.info("Get posts of user id: {}", id);
-//        List<PostDTO> postDtoPage = userService.findUserById(id).getPosts().subList((pageNumber-1)*pageSize, pageNumber*pageSize);
-//        return ResponseUtils.get(postDtoPage, HttpStatus.OK);
-//    }
+
+    @GetMapping(path = UserUrlUtils.GET_POSTS)
+    public ResponseEntity<ResponseDTO> getPosts(@PathVariable UUID id, @RequestParam(defaultValue = "5") int pageSize, @RequestParam(defaultValue = "1") int pageNumber) {
+        logger.info("Get posts of user id: {}", id);
+        List<PostDTO> postDtoPage = userService.getUserWithPosts(id).getPosts();
+        return ResponseUtils.get(postDtoPage, HttpStatus.OK);
+    }
+
 
     @GetMapping(path = UserUrlUtils.GET_CART)
     public ResponseEntity<ResponseDTO> getCart(@PathVariable UUID id) {

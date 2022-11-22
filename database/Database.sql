@@ -1,3 +1,5 @@
+
+
 DROP DATABASE IF EXISTS `online_shop_db`;
 CREATE DATABASE `online_shop_db`;
 USE `online_shop_db`;

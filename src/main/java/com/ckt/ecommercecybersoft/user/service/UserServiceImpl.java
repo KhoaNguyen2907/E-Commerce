@@ -210,7 +210,7 @@ public class UserServiceImpl implements UserService, Serializable {
     public Optional<UserDto> getCurrentUser() throws NotFoundException {
         String username = SecurityUtils.getLoginUsername().orElse(null);
         if (username != null && !username.equals("anonymousUser")) {
-            User user = userRepository.findByUsername(username).orElse(null);
+            User user = userRepository.findByUsername(username).orElseThrow(() -> new NotFoundException(UserExceptionUtils.USER_NOT_FOUND));
             return Optional.ofNullable(getMapper().map(user, UserDto.class));
         }
         return Optional.empty();
@@ -232,7 +232,7 @@ public class UserServiceImpl implements UserService, Serializable {
     }
 
     @Override
-    public UserDtoWithPosts getCurrentUserWithPosts(UUID id) {
+    public UserDtoWithPosts getUserWithPosts(UUID id) {
         User user = userRepository.findUserWithPostsById(id).orElseThrow(() -> new NotFoundException(UserExceptionUtils.USER_NOT_FOUND));
         return getMapper().map(user, UserDtoWithPosts.class);
     }

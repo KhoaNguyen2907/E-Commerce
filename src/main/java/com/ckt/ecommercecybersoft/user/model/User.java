@@ -1,9 +1,12 @@
 package com.ckt.ecommercecybersoft.user.model;
 
 import com.ckt.ecommercecybersoft.address.model.AddressEntity;
+import com.ckt.ecommercecybersoft.cart.model.CartItemEntity;
 import com.ckt.ecommercecybersoft.common.entity.BaseEntity;
 import com.ckt.ecommercecybersoft.order.model.OrderEntity;
+import com.ckt.ecommercecybersoft.post.model.Comment;
 import com.ckt.ecommercecybersoft.post.model.Post;
+import com.ckt.ecommercecybersoft.post.model.PostEntity;
 import com.ckt.ecommercecybersoft.role.model.Role;
 import com.ckt.ecommercecybersoft.user.utils.UserExceptionUtils;
 import lombok.Getter;
@@ -69,11 +72,11 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<CartItemEntity> cart;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = PostEntity.UserMappedPost.USER_MAPPED_POST)
-    private Set<Post> posts = new LinkedHashSet<>();
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = PostEntity.UserMappedPost.USER_MAPPED_POST, cascade = CascadeType.ALL)
+    private List<Post> posts;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = PostEntity.UserMappedComment.USER_MAPPED_COMMENT)
-    private Set<Comment> comments = new LinkedHashSet<>();
+    private List<Comment> comments;
 
     @PreRemove
     private void preRemove() {

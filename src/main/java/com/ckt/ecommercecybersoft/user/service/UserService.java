@@ -2,7 +2,6 @@ package com.ckt.ecommercecybersoft.user.service;
 
 import com.ckt.ecommercecybersoft.common.service.GenericService;
 import com.ckt.ecommercecybersoft.role.dto.RoleDto;
-import com.ckt.ecommercecybersoft.user.controller.UserController;
 import com.ckt.ecommercecybersoft.user.dto.UserDto;
 import com.ckt.ecommercecybersoft.user.dto.UserDtoWithCart;
 import com.ckt.ecommercecybersoft.user.dto.UserDtoWithOrders;
@@ -49,8 +48,9 @@ public interface UserService extends GenericService<User, UserDto, UUID> {
 
     UserDtoWithCart getUserWithCart(UUID id);
 
-    UserDtoWithPosts getCurrentUserWithPosts(UUID id);
+    UserDtoWithPosts getUserWithPosts(UUID id);
 
     UserDtoWithOrders getUserWithOrders(UUID id);
+
 }
 

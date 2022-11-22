@@ -23,8 +23,10 @@ public class PostDTO implements Serializable {
     @Length(min = 5, max = 500, message = "{post.subtitle.size}")
     private String subtitle;
 
-    @Length(min = 5, max = 50, message = "{post.code.size}")
     private String code;
+
+    @NotBlank
+    private String imageUrl;
 
     @NotBlank(message = "{post.content.blank}")
     private String content;

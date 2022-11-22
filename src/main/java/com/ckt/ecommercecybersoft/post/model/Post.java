@@ -1,6 +1,7 @@
 package com.ckt.ecommercecybersoft.post.model;
 
 import com.ckt.ecommercecybersoft.common.entity.BaseEntity;
+import com.ckt.ecommercecybersoft.user.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,7 +9,6 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -34,10 +34,13 @@ public class Post extends BaseEntity {
     @Column(name = PostEntity.Post.CONTENT)
     private String content;
 
+    @Column(name = PostEntity.Post.IMAGEURL)
+    private String imageUrl;
+
     @OneToMany(mappedBy = PostEntity.CommentMappedPost.POST_MAPPED_COMMENT, fetch = FetchType.LAZY)
     private Set<Comment> comments = new LinkedHashSet<>();
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = PostEntity.UserMappedPost.JOIN_TABLE_USER_ID)
     private User user;
 
@@ -46,4 +49,5 @@ public class Post extends BaseEntity {
         Post postObj = (Post) obj;
         return super.equals(obj) && postObj.getCode().equals(this.code);
     }
+
 }

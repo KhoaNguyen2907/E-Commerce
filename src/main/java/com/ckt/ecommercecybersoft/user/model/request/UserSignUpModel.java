@@ -27,7 +27,7 @@ public class UserSignUpModel {
     @NotBlank
     private String password;
 
-    @NotBlank
+    @NotBlank (message = UserExceptionUtils.EMAIL_NOT_BLANK)
     @UniqueEmail
     @Email(message = UserExceptionUtils.EMAIL_INVALID)
     private String email;

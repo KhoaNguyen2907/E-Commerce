@@ -2,6 +2,7 @@ package com.ckt.ecommercecybersoft.post.controller;
 
 import com.ckt.ecommercecybersoft.common.exception.NotFoundException;
 import com.ckt.ecommercecybersoft.common.model.ResponseDTO;
+import com.ckt.ecommercecybersoft.common.utils.DateTimeUtils;
 import com.ckt.ecommercecybersoft.common.utils.ProjectMapper;
 import com.ckt.ecommercecybersoft.common.utils.ResponseUtils;
 import com.ckt.ecommercecybersoft.post.dto.PostDTO;
@@ -40,13 +41,25 @@ public class PostController {
 
     @GetMapping(PostUrlUtils.GET_BY_ID)
     public ResponseEntity<ResponseDTO> getPostById(@PathVariable("id") UUID id) {
-        Post post = postService.findById(id).orElseThrow(() -> new NotFoundException("Post not found!"));
+        Post post = postService.findById(id).orElseThrow(() -> new NotFoundException("099 Post not found!"));
         return ResponseUtils.get(postMapper.map(post, PostDTO.class), HttpStatus.OK);
     }
 
     @PostMapping(PostUrlUtils.ADD_POST)
     public ResponseEntity<ResponseDTO> addPost(@RequestBody @Valid PostDTO postDTO) {
-        return ResponseUtils.get(postService.save(postDTO, Post.class), HttpStatus.CREATED);
+        //split string to code
+        String[] arr = postDTO.getTitle().split(" ");
+        StringBuilder code = new StringBuilder();
+        for (String s: arr) {
+            code.append(s);
+            code.append("-");
+        }
+        code.append(DateTimeUtils.now());
+        postDTO.setCode(code.toString());
+
+        PostDTO savedPost = postService.createPost(postDTO);
+
+        return ResponseUtils.get(savedPost, HttpStatus.CREATED);
     }
 
     @PutMapping(PostUrlUtils.UPDATE_POST)

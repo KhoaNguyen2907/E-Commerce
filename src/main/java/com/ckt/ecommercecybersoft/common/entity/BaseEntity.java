@@ -33,9 +33,9 @@ public class BaseEntity implements Serializable {
     @Column(name = Columns.ID)
     protected UUID id;
 
-    @Version
-    @Column(name = Columns.VERSION)
-    protected int version;
+//    @Version
+//    @Column(name = Columns.VERSION)
+//    protected int version;
 
     @CreatedBy
     @Column(name = Columns.CREATED_BY, updatable = false)
