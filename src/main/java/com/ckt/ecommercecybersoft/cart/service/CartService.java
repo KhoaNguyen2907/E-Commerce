@@ -111,6 +111,7 @@ class CartServiceImpl implements CartService {
 //
 //        }
 //        return null;
+
         CartItemDTO cartItemDTO = mapper.map(cartItemRequestDTO, CartItemDTO.class);
 
         ProductEntity product = productService.findById(cartItemRequestDTO.getProductId())
