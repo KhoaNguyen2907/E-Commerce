@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+@CrossOrigin
 @RequestMapping(CartUrl.URL_CART)
 @RestController
 public class CartResource {

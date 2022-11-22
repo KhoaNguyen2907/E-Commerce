@@ -15,6 +15,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
+@CrossOrigin
 @RestController
 @RequestMapping(UrlUtil.URL_PRODUCT)
 public class ProductResource {

@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@CrossOrigin
 @RestController
 @RequestMapping(path = UserUrlUtils.USER_API_V1)
 public class UserController {

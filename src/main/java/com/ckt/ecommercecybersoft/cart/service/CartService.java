@@ -140,7 +140,6 @@ class CartServiceImpl implements CartService {
         return mapper.map(cartItemDTO, CartItemResponseDTO.class);
     }
 
-
     @Override
     public void deleteCartItem(UUID id) {
        cartRepository.findById(id).orElseThrow(() -> new NotFoundException(CartExceptionUtils.CART_ITEM_NOT_FOUND));

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.UUID;
 
-
+@CrossOrigin
 @RestController
 @RequestMapping(PostUrlUtils.POST_API_V1)
 public class PostController {

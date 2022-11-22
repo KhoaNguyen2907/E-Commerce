@@ -3,7 +3,6 @@ package com.ckt.ecommercecybersoft.role.controller;
 import com.ckt.ecommercecybersoft.common.model.ResponseDTO;
 import com.ckt.ecommercecybersoft.common.utils.ResponseUtils;
 import com.ckt.ecommercecybersoft.role.dto.RoleDto;
-import com.ckt.ecommercecybersoft.role.model.Role;
 import com.ckt.ecommercecybersoft.role.service.RoleService;
 import com.ckt.ecommercecybersoft.role.utils.RoleUrlUtils;
 import com.ckt.ecommercecybersoft.security.authorization.AdminOnly;
@@ -11,8 +10,6 @@ import com.ckt.ecommercecybersoft.user.model.response.OperationStatusModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +17,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.UUID;
 
+@CrossOrigin
 @RestController
 @RequestMapping(RoleUrlUtils.ROLE_API_V1)
 public class RoleController {

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.UUID;
 
+@CrossOrigin
 @RestController
 @RequestMapping(CommentUrlUtils.COMMENT_API_V1)
 public class CommentController {

@@ -50,4 +50,4 @@ spring:
     type: redis
   redis:
     host: ${REDIS_HOST:127.0.0.1}
-    port: ${REDIS_PORT:6379}
+    port: ${REDIS_PORT:6378}
