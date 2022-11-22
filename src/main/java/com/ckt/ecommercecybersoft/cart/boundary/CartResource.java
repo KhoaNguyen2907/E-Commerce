@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @CrossOrigin
@@ -30,8 +31,8 @@ public class CartResource {
     @PostMapping
     public ResponseEntity<ResponseDTO> addCartItem(
             @RequestBody CartItemRequestDTO cartItemRequestDTO) {
-        CartItemResponseDTO cartItemResponseDTO = cartService.setCartItem(cartItemRequestDTO);
-        return ResponseUtils.get(cartItemResponseDTO, HttpStatus.CREATED);
+        List<CartItemResponseDTO> cartItemResponseDTOs = cartService.setCartItem(cartItemRequestDTO);
+        return ResponseUtils.get(cartItemResponseDTOs, HttpStatus.CREATED);
     }
 
     @DeleteMapping(value = CartUrl.BY_ID)
