@@ -30,7 +30,7 @@ public class CartResource {
     @PostMapping
     public ResponseEntity<ResponseDTO> addCartItem(
             @RequestBody CartItemRequestDTO cartItemRequestDTO) {
-        CartItemResponseDTO cartItemResponseDTO = cartService.createCartItem(cartItemRequestDTO);
+        CartItemResponseDTO cartItemResponseDTO = cartService.setCartItem(cartItemRequestDTO);
         return ResponseUtils.get(cartItemResponseDTO, HttpStatus.CREATED);
     }
 

@@ -1,16 +1,13 @@
 package com.ckt.ecommercecybersoft.user.controller;
 
 import com.ckt.ecommercecybersoft.cart.dto.CartItemResponseDTO;
-import com.ckt.ecommercecybersoft.cart.service.CartService;
 import com.ckt.ecommercecybersoft.common.exception.ForbiddenException;
 import com.ckt.ecommercecybersoft.common.exception.NotFoundException;
 import com.ckt.ecommercecybersoft.common.model.ResponseDTO;
 import com.ckt.ecommercecybersoft.common.utils.ProjectMapper;
 import com.ckt.ecommercecybersoft.common.utils.ResponseUtils;
 import com.ckt.ecommercecybersoft.order.model.OrderSimpleInfoModel;
-import com.ckt.ecommercecybersoft.order.service.OrderService;
 import com.ckt.ecommercecybersoft.post.dto.PostDTO;
-import com.ckt.ecommercecybersoft.post.service.PostService;
 import com.ckt.ecommercecybersoft.role.dto.RoleDto;
 import com.ckt.ecommercecybersoft.security.authorization.AdminOnly;
 import com.ckt.ecommercecybersoft.user.dto.UserDto;
@@ -45,12 +42,6 @@ import java.util.stream.Collectors;
 public class UserController {
     @Autowired
     private UserService userService;
-    @Autowired
-    private CartService cartService;
-    @Autowired
-    private OrderService orderService;
-    @Autowired
-    private PostService postService;;
     @Autowired
     private ProjectMapper mapper;
 
@@ -287,7 +278,7 @@ public class UserController {
         return ResponseUtils.get(orderDTOs, HttpStatus.OK);
     }
 
-
+    @AdminOnly
     @GetMapping(path = UserUrlUtils.GET_POSTS)
     public ResponseEntity<ResponseDTO> getPosts(@PathVariable UUID id, @RequestParam(defaultValue = "5") int pageSize, @RequestParam(defaultValue = "1") int pageNumber) {
         logger.info("Get posts of user id: {}", id);

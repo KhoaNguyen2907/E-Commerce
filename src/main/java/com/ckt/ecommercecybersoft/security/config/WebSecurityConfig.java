@@ -51,7 +51,17 @@ public class WebSecurityConfig {
         http.csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/api/v1/auth/**").permitAll()
-                .antMatchers("/api/v1/users").authenticated()
+                .antMatchers("/api/v1/users/sign-up").permitAll()
+                .antMatchers("/api/v1/users//email-verifications").permitAll()
+                .antMatchers("/api/v1/users/password-reset").permitAll()
+                .antMatchers("/api/v1/users/email-verifications").permitAll()
+                .antMatchers("/api/v1/users//verify-password-reset-token").permitAll()
+                .antMatchers(HttpMethod.GET,"/api/v1/products/").permitAll()
+                .antMatchers("/api/v1/products/{id}").permitAll()
+
+                .antMatchers("/api/v1/users/**").authenticated()
+                .antMatchers("/api/v1/roles/**").authenticated()
+                .antMatchers("/api/v1/products/**").authenticated()
                 .antMatchers("/swagger-ui/**").permitAll()
                 .anyRequest().permitAll()
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

@@ -31,7 +31,7 @@ public interface CartService extends
 
     List<CartItemDTO> getAllCartItemByUserId(UUID userId);
 
-    CartItemResponseDTO createCartItem(CartItemRequestDTO cartItemRequestDTO);
+    CartItemResponseDTO setCartItem(CartItemRequestDTO cartItemRequestDTO);
 
     void deleteCartItem(UUID id);
 
@@ -73,9 +73,8 @@ class CartServiceImpl implements CartService {
         return cartRepository.findByUserId(userId).stream().map(cartItem -> mapper.map(cartItem, CartItemDTO.class)).collect(Collectors.toList());
     }
 
-
     @Override
-    public CartItemResponseDTO createCartItem(CartItemRequestDTO cartItemRequestDTO) {
+    public CartItemResponseDTO setCartItem(CartItemRequestDTO cartItemRequestDTO) {
 //        UUID uuid = UUID.fromString("b2b5dd10-ac46-4445-aad0-5ad7b625480d");
 //        List<CartItemEntity> users = cartRepository.findByUserIdAndProductId(
 //                /*userService.getCurrentUser().getId(),*/
@@ -110,7 +109,12 @@ class CartServiceImpl implements CartService {
 //
 //        }
 //        return null;
+
         CartItemDTO cartItemDTO = mapper.map(cartItemRequestDTO, CartItemDTO.class);
+        if (cartItemDTO.getQuantity() == 0) {
+            cartRepository.deleteById(cartItemDTO.getId());
+            return null;
+        }
         ProductEntity product = productService.findById(cartItemRequestDTO.getProductId())
                 .orElseThrow(() -> new NotFoundException(ProductExceptionUtils.PRODUCT_NOT_FOUND));
         ProductDTO productDto = mapper.map(product, ProductDTO.class);
@@ -135,6 +139,7 @@ class CartServiceImpl implements CartService {
             }
 
             CartItemEntity savedCart = cartRepository.save(cartItem);
+
             return mapper.map(savedCart, CartItemResponseDTO.class);
         }
         return mapper.map(cartItemDTO, CartItemResponseDTO.class);
