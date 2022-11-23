@@ -1,34 +1,7 @@
 AUTHORIZATION
 
 Authentication required:
-    getUserById
-    getAllUsers
-    updateUserInfo
-    changePassword
-    deleteUser
-    getOrders
-    getPosts
-    getCart
-
-    getAllRoles
-    createRole
-
-    saveProduct
-    updateProduct
-    deleteProduct
-
-    addPost
-    updatePost
-    deletePost
-
-    CommeommentController
-
-    getAllOrder
-
-    createCategory
-    updateCategory
-    deleteCategory
-
+    updateUser
 
 
 Admin Only:
@@ -39,15 +12,6 @@ Admin Only:
     getUserById
     deleteUser
     changeRole
-    searchUser
-
-    saveProduct
-    updateProduct
-    deleteProduct
-
-    addPost
-    updatePost
-    deletePost
 
 
 

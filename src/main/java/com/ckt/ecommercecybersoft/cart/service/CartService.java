@@ -31,11 +31,9 @@ public interface CartService extends
 
     List<CartItemDTO> getAllCartItemByUserId(UUID userId);
 
-    List<CartItemResponseDTO> setCartItem(CartItemRequestDTO cartItemRequestDTO);
+    CartItemResponseDTO createCartItem(CartItemRequestDTO cartItemRequestDTO);
 
     void deleteCartItem(UUID id);
-
-    List<CartItemResponseDTO> getCartItemsByUserId(UUID userId);
 
 }
 
@@ -75,8 +73,9 @@ class CartServiceImpl implements CartService {
         return cartRepository.findByUserId(userId).stream().map(cartItem -> mapper.map(cartItem, CartItemDTO.class)).collect(Collectors.toList());
     }
 
+
     @Override
-    public List<CartItemResponseDTO> setCartItem(CartItemRequestDTO cartItemRequestDTO) {
+    public CartItemResponseDTO createCartItem(CartItemRequestDTO cartItemRequestDTO) {
 //        UUID uuid = UUID.fromString("b2b5dd10-ac46-4445-aad0-5ad7b625480d");
 //        List<CartItemEntity> users = cartRepository.findByUserIdAndProductId(
 //                /*userService.getCurrentUser().getId(),*/
@@ -112,7 +111,6 @@ class CartServiceImpl implements CartService {
 //        }
 //        return null;
         CartItemDTO cartItemDTO = mapper.map(cartItemRequestDTO, CartItemDTO.class);
-
         ProductEntity product = productService.findById(cartItemRequestDTO.getProductId())
                 .orElseThrow(() -> new NotFoundException(ProductExceptionUtils.PRODUCT_NOT_FOUND));
         ProductDTO productDto = mapper.map(product, ProductDTO.class);
@@ -129,10 +127,6 @@ class CartServiceImpl implements CartService {
             );
 
             if (cartItem != null) {
-                if (cartItemDTO.getQuantity() == 0){
-                    cartRepository.deleteById(cartItem.getId());
-                    return null;
-                }
                 cartItem.setQuantity(cartItemDTO.getQuantity());
                 cartItem.setTotalPrice(cartItemDTO.getTotalPrice());
             } else {
@@ -140,24 +134,16 @@ class CartServiceImpl implements CartService {
                 cartItem = mapper.map(cartItemDTO, CartItemEntity.class);
             }
 
-            cartRepository.save(cartItem);
-
-            return getCartItemsByUserId(userDto.getId());
+            CartItemEntity savedCart = cartRepository.save(cartItem);
+            return mapper.map(savedCart, CartItemResponseDTO.class);
         }
-        return null;
+        return mapper.map(cartItemDTO, CartItemResponseDTO.class);
     }
 
     @Override
     public void deleteCartItem(UUID id) {
        cartRepository.findById(id).orElseThrow(() -> new NotFoundException(CartExceptionUtils.CART_ITEM_NOT_FOUND));
        cartRepository.deleteById(id);
-    }
-
-    @Override
-    public List<CartItemResponseDTO> getCartItemsByUserId(UUID userId) {
-        return cartRepository.findByUserId(userId).stream()
-                .map(cartItem -> mapper.map(cartItem, CartItemResponseDTO.class))
-                .collect(Collectors.toList());
     }
 
     @Override

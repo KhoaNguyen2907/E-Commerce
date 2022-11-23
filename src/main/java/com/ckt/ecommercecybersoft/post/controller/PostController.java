@@ -9,7 +9,6 @@ import com.ckt.ecommercecybersoft.post.dto.PostDTO;
 import com.ckt.ecommercecybersoft.post.model.Post;
 import com.ckt.ecommercecybersoft.post.service.PostService;
 import com.ckt.ecommercecybersoft.post.utils.PostUrlUtils;
-import com.ckt.ecommercecybersoft.security.authorization.AdminOnly;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,7 +47,6 @@ public class PostController {
         return ResponseUtils.get(postMapper.map(post, PostDTO.class), HttpStatus.OK);
     }
 
-    @AdminOnly
     @PostMapping(PostUrlUtils.ADD_POST)
     public ResponseEntity<ResponseDTO> addPost(@RequestBody @Valid PostDTO postDTO) {
         //split string to code
@@ -66,13 +64,11 @@ public class PostController {
         return ResponseUtils.get(savedPost, HttpStatus.CREATED);
     }
 
-    @AdminOnly
     @PutMapping(PostUrlUtils.UPDATE_POST)
     public ResponseEntity<ResponseDTO> updatePost(@RequestBody @Valid PostDTO postDTO, @PathVariable("id") UUID id) {
         return ResponseUtils.get(postService.updatePost(postDTO, id), HttpStatus.OK);
     }
 
-    @AdminOnly
     @DeleteMapping(PostUrlUtils.DELETE_POST)
     public ResponseEntity<Object> deletePost(@PathVariable("id") UUID id) {
         postService.deleteById(id);

@@ -7,6 +7,7 @@ import com.ckt.ecommercecybersoft.user.model.response.OperationName;
 import com.ckt.ecommercecybersoft.user.model.response.OperationStatus;
 import com.ckt.ecommercecybersoft.user.model.response.OperationStatusModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@CrossOrigin
+@CrossOrigin(value = "http://localhost:3000", allowCredentials = "true")
 @RequestMapping("/api/v1/auth")
 public class AuthController {
     @Autowired
@@ -43,7 +44,12 @@ public class AuthController {
         OperationStatusModel operationStatusModel = new OperationStatusModel();
         operationStatusModel.setOperationName(OperationName.LOGIN.name());
         operationStatusModel.setOperationResult(OperationStatus.SUCCESS.name());
-        return ResponseEntity.ok().header("Authorization", jwtToken)
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", jwtToken);
+        headers.set("Access-Control-Expose-Headers", "Authorization");
+
+        return ResponseEntity.ok().headers(headers)
                 .body(new ResponseDTO(operationStatusModel, false, null, System.currentTimeMillis(), false, 200));
     }
 }

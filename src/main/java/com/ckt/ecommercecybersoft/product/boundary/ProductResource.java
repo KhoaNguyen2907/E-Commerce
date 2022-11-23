@@ -6,7 +6,6 @@ import com.ckt.ecommercecybersoft.common.utils.ResponseUtils;
 import com.ckt.ecommercecybersoft.product.dto.ProductDTO;
 import com.ckt.ecommercecybersoft.product.service.ProductService;
 import com.ckt.ecommercecybersoft.product.util.UrlUtil;
-import com.ckt.ecommercecybersoft.security.authorization.AdminOnly;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +15,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
-@CrossOrigin
+@CrossOrigin(value = "http://localhost:3000", allowCredentials = "true")
 @RestController
 @RequestMapping(UrlUtil.URL_PRODUCT)
 public class ProductResource {
@@ -37,7 +36,7 @@ public class ProductResource {
         return ResponseUtils.get(productDTO, HttpStatus.OK);
     }
 
-    @AdminOnly
+
     @PostMapping
     public ResponseEntity<ResponseDTO> saveProduct(@RequestBody @Valid ProductDTO productDTO){
 //        String thumbUrl = productDTO.getThumbnailUrl();
@@ -52,7 +51,6 @@ public class ProductResource {
         );
     }
 
-    @AdminOnly
     @PutMapping("/{id}")
     public ResponseEntity<ResponseDTO> updateProduct(@RequestBody ProductDTO productDTO, @PathVariable UUID id) {
         return ResponseUtils.get(
@@ -61,7 +59,6 @@ public class ProductResource {
         );
     }
 
-    @AdminOnly
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseDTO> deleteProduct(@PathVariable UUID id){
         productService.deleteById(id);
