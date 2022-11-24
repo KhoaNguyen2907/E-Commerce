@@ -1,8 +1,6 @@
 package com.ckt.ecommercecybersoft.role.dto;
 
 import com.ckt.ecommercecybersoft.role.utils.RoleExceptionUtils;
-import com.ckt.ecommercecybersoft.user.dto.UserDto;
-import com.ckt.ecommercecybersoft.user.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,9 +9,6 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 @Getter

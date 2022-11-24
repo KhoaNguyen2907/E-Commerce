@@ -26,7 +26,7 @@ import java.util.List;
 @Where(clause = "status <> 'PERMANENTLY_BLOCKED'")
 @Table(name = UserColumn.TABLE_NAME)
 public class User extends BaseEntity {
-    @Column(name = UserColumn.USERNAME,unique = true, nullable = false)
+    @Column(name = UserColumn.USERNAME, unique = true, nullable = false)
     @Length(min = 5, max = 50, message = UserExceptionUtils.USERNAME_LENGTH)
     @NotBlank(message = UserExceptionUtils.USERNAME_NOT_BLANK)
     private String username;
@@ -38,11 +38,11 @@ public class User extends BaseEntity {
 
     @Column(name = UserColumn.EMAIL, unique = true, nullable = false)
     @Email(message = UserExceptionUtils.EMAIL_INVALID)
-    @NotBlank (message = UserExceptionUtils.EMAIL_NOT_BLANK)
+    @NotBlank(message = UserExceptionUtils.EMAIL_NOT_BLANK)
     private String email;
 
     @Column(name = UserColumn.NAME)
-    @NotBlank (message = UserExceptionUtils.NAME_NOT_BLANK)
+    @NotBlank(message = UserExceptionUtils.NAME_NOT_BLANK)
     private String name;
 
     @Column(name = UserColumn.AVATAR)
@@ -59,7 +59,7 @@ public class User extends BaseEntity {
     @Column(name = UserColumn.EMAIL_VERIFIED)
     private boolean emailVerified = false;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE })
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = UserColumn.ROLE_ID)
     private Role role;
 
@@ -80,6 +80,22 @@ public class User extends BaseEntity {
         this.setStatus(Status.PERMANENTLY_BLOCKED);
     }
 
+    public void addComment(Comment comment) {
+        this.comments.add(comment);
+    }
+
+    public void removeComment(Comment comment) {
+        this.comments.remove(comment);
+    }
+
+    public void addPost(Post post) {
+        this.posts.add(post);
+    }
+
+    public void removePost(Post post) {
+        this.posts.remove(post);
+    }
+
     @Override
     public boolean equals(Object obj) {
         User userObj = (User) obj;
@@ -88,11 +104,9 @@ public class User extends BaseEntity {
                 && userObj.getEmail().equals(this.email);
     }
 
-    public enum  Status {
+    public enum Status {
         ACTIVE,
         TEMPORARY_BLOCKED,
         PERMANENTLY_BLOCKED
     }
-
-
 }

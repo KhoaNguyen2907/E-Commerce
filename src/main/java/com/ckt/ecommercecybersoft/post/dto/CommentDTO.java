@@ -17,4 +17,8 @@ public class CommentDTO implements Serializable {
 
     @NotBlank(message = "{comment.cmt.blank}")
     private String cmt;
+
+    private UUID userId;
+
+    private UUID postId;
 }
