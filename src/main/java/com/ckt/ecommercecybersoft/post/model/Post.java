@@ -10,6 +10,7 @@ import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 
 
@@ -44,10 +45,24 @@ public class Post extends BaseEntity {
     @JoinColumn(name = PostEntity.UserMappedPost.JOIN_TABLE_USER_ID)
     private User user;
 
+    public void removeComment (Comment comment){
+        this.comments.remove(comment);
+    }
+
+    public void addComment (Comment comment) {
+        this.comments.add(comment);
+    }
+
     @Override
     public boolean equals(Object obj) {
-        Post postObj = (Post) obj;
-        return super.equals(obj) && postObj.getCode().equals(this.code);
+        if(this == obj){
+            return true;
+        }
+        if(obj == null || Hibernate.getClass(this) != Hibernate.getClass(obj)) {
+            return false;
+        }
+        Post post = (Post) obj;
+        return this.id != null && Objects.equals(this.id, post.id);
     }
 
 }

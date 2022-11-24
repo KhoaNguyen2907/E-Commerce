@@ -32,10 +32,13 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = PostEntity.UserMappedComment.JOIN_TABLE_USER_ID)
     private User user;
 
-
-
     @Override
     public boolean equals(Object obj) {
         return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }

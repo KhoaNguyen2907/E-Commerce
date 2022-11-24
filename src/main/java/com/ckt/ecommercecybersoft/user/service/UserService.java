@@ -15,6 +15,7 @@ import java.util.UUID;
 
 /**
  * User service
+ *
  * @author KhoaNguyen
  */
 public interface UserService extends GenericService<User, UserDto, UUID> {
@@ -24,7 +25,6 @@ public interface UserService extends GenericService<User, UserDto, UUID> {
     UserDto updateUser(UserDto userDto);
 
     boolean deleteUser(UUID id);
-
 
     UserDto findByUsername(String username);
 

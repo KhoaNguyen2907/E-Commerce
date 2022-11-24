@@ -60,7 +60,6 @@ public class BaseEntity implements Serializable {
     @UtilityClass
     private static class Columns {
         static final String ID = "id";
-        static final String VERSION = "version";
         static final String CREATED_BY = "created_by";
         static final String CREATED_AT = "created_at";
         static final String LAST_MODIFIED_BY = "last_modified_by";

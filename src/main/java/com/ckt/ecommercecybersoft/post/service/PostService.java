@@ -15,6 +15,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.ValidationException;
 import java.util.UUID;
 
 public interface PostService extends GenericService<Post, PostDTO, UUID> {
@@ -31,12 +32,13 @@ class PostServiceImpl implements PostService {
     private UserService userService;
 
     private final PostRepository postRepository;
-
+    private final UserService userService;
     private final ProjectMapper mapper;
 
-    public PostServiceImpl(PostRepository postRepository, ProjectMapper mapper) {
+    public PostServiceImpl(PostRepository postRepository, ProjectMapper mapper, UserService userService) {
         this.postRepository = postRepository;
         this.mapper = mapper;
+        this.userService = userService;
     }
 
     @Override

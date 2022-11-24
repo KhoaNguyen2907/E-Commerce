@@ -30,4 +30,6 @@ public class PostDTO implements Serializable {
 
     @NotBlank(message = "{post.content.blank}")
     private String content;
+
+    private UUID userId;
 }

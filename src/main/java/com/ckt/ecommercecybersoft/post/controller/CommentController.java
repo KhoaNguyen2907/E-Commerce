@@ -46,10 +46,10 @@ public class CommentController {
 
     @PostMapping(CommentUrlUtils.ADD_COMMENT)
     public ResponseEntity<ResponseDTO> addComment(@RequestBody @Valid CommentDTO commentDTO) {
-        return ResponseUtils.get(commentService.save(commentDTO, Comment.class), HttpStatus.CREATED);
+        return ResponseUtils.get(commentService.addComment(commentDTO), HttpStatus.CREATED);
     }
 
-    @PutMapping(CommentUrlUtils.UPDATE_COMMENT)
+    @PutMapping(CommentUrlUtils.UPDATE_COMMENT_BY_ID)
     public ResponseEntity<ResponseDTO> updateComment(@PathVariable("id") UUID id, @RequestBody @Valid CommentDTO commentDTO) {
         return ResponseUtils.get(commentService.updateComment(commentDTO, id), HttpStatus.OK);
     }
