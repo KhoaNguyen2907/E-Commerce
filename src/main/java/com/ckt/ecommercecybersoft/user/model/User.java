@@ -1,9 +1,12 @@
 package com.ckt.ecommercecybersoft.user.model;
 
 import com.ckt.ecommercecybersoft.address.model.AddressEntity;
+import com.ckt.ecommercecybersoft.cart.model.CartItemEntity;
 import com.ckt.ecommercecybersoft.common.entity.BaseEntity;
 import com.ckt.ecommercecybersoft.order.model.OrderEntity;
+import com.ckt.ecommercecybersoft.post.model.Comment;
 import com.ckt.ecommercecybersoft.post.model.Post;
+import com.ckt.ecommercecybersoft.post.model.PostEntity;
 import com.ckt.ecommercecybersoft.role.model.Role;
 import com.ckt.ecommercecybersoft.user.utils.UserExceptionUtils;
 import lombok.Getter;
@@ -16,7 +19,9 @@ import org.hibernate.validator.constraints.Length;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
