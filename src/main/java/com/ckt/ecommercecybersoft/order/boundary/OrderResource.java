@@ -1,50 +1,54 @@
 package com.ckt.ecommercecybersoft.order.boundary;
 
+import com.ckt.ecommercecybersoft.common.model.ResponseDTO;
+import com.ckt.ecommercecybersoft.common.utils.ProjectMapper;
 import com.ckt.ecommercecybersoft.common.utils.ResponseUtils;
 import com.ckt.ecommercecybersoft.order.constant.OrderUrl;
+import com.ckt.ecommercecybersoft.order.dto.OrderDTO;
 import com.ckt.ecommercecybersoft.order.dto.RequestOrderDTO;
 import com.ckt.ecommercecybersoft.order.dto.ResponseOrderDTO;
 import com.ckt.ecommercecybersoft.order.service.OrderService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RequestMapping(value = OrderUrl.URL_ORDER)
 @RestController
 public class OrderResource {
-    private final OrderService orderService;
+    @Autowired
+    private OrderService orderService;
+    @Autowired
+    ProjectMapper mapper;
 
-    public OrderResource(OrderService orderService) {
-        this.orderService = orderService;
-    }
 
     @GetMapping
-    public List<ResponseOrderDTO> getAllOrder() {
-        return null;
+    public ResponseEntity<ResponseDTO> getAllOrder() {
+        List<ResponseOrderDTO> responseOrderDTOs = orderService.findAllDto(OrderDTO.class).stream()
+                .map(orderDTO -> mapper.map(orderDTO, ResponseOrderDTO.class))
+                .collect(Collectors.toList());
+        return ResponseUtils.get(responseOrderDTOs,HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<?> createOrder(
+    public ResponseEntity<ResponseDTO> createOrder(
             @RequestBody RequestOrderDTO requestOrderDTO) {
-        return ResponseUtils.get(
-                orderService.createOrder(requestOrderDTO),
-                HttpStatus.CREATED
-        );
+        return ResponseUtils.get(orderService.createOrder(requestOrderDTO), HttpStatus.CREATED);
     }
 
-    @PutMapping(value = "/{id}")
-    public ResponseEntity<?> updateOrder(
-            @RequestBody RequestOrderDTO requestOrderDTO,
-            @PathVariable UUID id){
-        return null;
-    }
+//    @PutMapping(value = "/{id}")
+//    public ResponseEntity<ResponseDTO> updateOrder(
+//            @RequestBody RequestOrderDTO requestOrderDTO,
+//            @PathVariable UUID id){
+//        return null;
+//    }
 
-    @DeleteMapping
-    public ResponseEntity<?> deleteOrder() {
-        return null;
-    }
+//    @DeleteMapping
+//    public ResponseEntity<ResponseDTO> deleteOrder() {
+//        return null;
+//    }
 
 }

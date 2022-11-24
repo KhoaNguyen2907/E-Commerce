@@ -47,7 +47,7 @@ public interface GenericService<T extends BaseEntity, D, I> {
     }
 
     default void deleteById(I id) {
-        getRepository().findById(id).orElseThrow(() -> new NotFoundException("Data Not Found"));
+        getRepository().findById(id).orElseThrow(() -> new NotFoundException("099 Data Not Found"));
         getRepository().deleteById(id);
     }
 

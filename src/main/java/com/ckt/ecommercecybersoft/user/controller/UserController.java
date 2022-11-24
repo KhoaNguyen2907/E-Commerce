@@ -1,13 +1,18 @@
 package com.ckt.ecommercecybersoft.user.controller;
 
+import com.ckt.ecommercecybersoft.cart.dto.CartItemResponseDTO;
+import com.ckt.ecommercecybersoft.cart.service.CartService;
+import com.ckt.ecommercecybersoft.common.exception.ForbiddenException;
 import com.ckt.ecommercecybersoft.common.exception.NotFoundException;
 import com.ckt.ecommercecybersoft.common.model.ResponseDTO;
 import com.ckt.ecommercecybersoft.common.utils.ProjectMapper;
 import com.ckt.ecommercecybersoft.common.utils.ResponseUtils;
+import com.ckt.ecommercecybersoft.order.model.OrderSimpleInfoModel;
+import com.ckt.ecommercecybersoft.order.service.OrderService;
+import com.ckt.ecommercecybersoft.post.service.PostService;
 import com.ckt.ecommercecybersoft.role.dto.RoleDto;
 import com.ckt.ecommercecybersoft.security.authorization.AdminOnly;
 import com.ckt.ecommercecybersoft.user.dto.UserDto;
-import com.ckt.ecommercecybersoft.user.model.User;
 import com.ckt.ecommercecybersoft.user.model.request.PasswordModel;
 import com.ckt.ecommercecybersoft.user.model.request.PasswordResetRequestModel;
 import com.ckt.ecommercecybersoft.user.model.request.UserInfoModel;
@@ -17,21 +22,17 @@ import com.ckt.ecommercecybersoft.user.model.response.OperationStatus;
 import com.ckt.ecommercecybersoft.user.model.response.OperationStatusModel;
 import com.ckt.ecommercecybersoft.user.model.response.UserResponseModel;
 import com.ckt.ecommercecybersoft.user.service.UserService;
+import com.ckt.ecommercecybersoft.user.utils.UserExceptionUtils;
 import com.ckt.ecommercecybersoft.user.utils.UserUrlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.security.sasl.AuthenticationException;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
@@ -42,6 +43,12 @@ import java.util.stream.Collectors;
 public class UserController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private CartService cartService;
+    @Autowired
+    private OrderService orderService;
+    @Autowired
+    private PostService postService;;
     @Autowired
     private ProjectMapper mapper;
 
@@ -83,7 +90,7 @@ public class UserController {
     @GetMapping(path = UserUrlUtils.CURRENT_LOGIN_USER)
     public ResponseEntity<ResponseDTO> getCurrentUser() {
         logger.info("Get current user");
-        UserDto userDto = userService.getCurrentUser();
+        UserDto userDto = userService.getCurrentUser().orElseThrow(() -> new NotFoundException(UserExceptionUtils.USER_NOT_FOUND));
         UserResponseModel userResponseModel = mapper.map(userDto, UserResponseModel.class);
         return ResponseUtils.get(userResponseModel, HttpStatus.OK);
     }
@@ -97,7 +104,7 @@ public class UserController {
     @PutMapping
     public ResponseEntity<ResponseDTO> updateUserInfo(@Valid @RequestBody UserInfoModel user) {
         UserDto userDto = mapper.map(user, UserDto.class);
-        UserDto currentLoginUser = userService.getCurrentUser();
+        UserDto currentLoginUser = userService.getCurrentUser().orElseThrow(() -> new NotFoundException(UserExceptionUtils.USER_NOT_FOUND));
         userDto.setId(currentLoginUser.getId());
         userDto.setUsername(currentLoginUser.getUsername());
         logger.info("Update user id: {}. \n New user info: {}", userDto.getId(), userDto);
@@ -113,7 +120,7 @@ public class UserController {
      */
     @PutMapping(path = UserUrlUtils.CHANGE_PASSWORD)
     public ResponseEntity<ResponseDTO> changePassword(@Valid @RequestBody PasswordModel passwordModel) {
-        UserDto currentLoginUser = userService.getCurrentUser();
+        UserDto currentLoginUser = userService.getCurrentUser().orElseThrow(() -> new NotFoundException(UserExceptionUtils.USER_NOT_FOUND));
         passwordModel.setId(currentLoginUser.getId());
         logger.info("Change password for user id: {}", passwordModel.getId());
         boolean isChanged = userService.changePassword(passwordModel.getId(), passwordModel.getOldPassword(), passwordModel.getPassword());
@@ -264,6 +271,37 @@ public class UserController {
         }
         List<UserResponseModel> userResponseModelList = userDtoPage.stream().map(userDto -> mapper.map(userDto, UserResponseModel.class)).collect(Collectors.toList());
         return ResponseUtils.get(userResponseModelList, HttpStatus.OK);
+    }
+
+    @GetMapping(path = UserUrlUtils.GET_ORDERS)
+    public ResponseEntity<ResponseDTO> getOrders(@PathVariable UUID id, @RequestParam(defaultValue = "5") int pageSize, @RequestParam(defaultValue = "1") int pageNumber) throws AuthenticationException {
+        logger.info("Get orders of user id: {}", id);
+        //if user is not admin, only get orders of current user
+        UserDto currentUser = userService.getCurrentUser().orElseThrow(() -> new ForbiddenException("Not login"));
+        if (!currentUser.getRole().getCode().equals("ADMIN")) {
+            id = currentUser.getId();
+        }
+        List<OrderSimpleInfoModel> orderDTOs = userService.getUserWithOrders(id).getOrders();
+        return ResponseUtils.get(orderDTOs, HttpStatus.OK);
+    }
+
+//    @GetMapping(path = UserUrlUtils.GET_POSTS)
+//    public ResponseEntity<ResponseDTO> getPosts(@PathVariable UUID id, @RequestParam(defaultValue = "5") int pageSize, @RequestParam(defaultValue = "1") int pageNumber) {
+//        logger.info("Get posts of user id: {}", id);
+//        List<PostDTO> postDtoPage = userService.findUserById(id).getPosts().subList((pageNumber-1)*pageSize, pageNumber*pageSize);
+//        return ResponseUtils.get(postDtoPage, HttpStatus.OK);
+//    }
+
+    @GetMapping(path = UserUrlUtils.GET_CART)
+    public ResponseEntity<ResponseDTO> getCart(@PathVariable UUID id) {
+        UserDto currentUser = userService.getCurrentUser().orElseThrow(() -> new NotFoundException(UserExceptionUtils.USER_NOT_FOUND));
+        if (!currentUser.getRole().getCode().equals("ADMIN")) {
+            id = currentUser.getId();
+        }
+        logger.info("Get cart of user id: {}", id);
+        List<CartItemResponseDTO> cartDTO = userService.getUserWithCart(id).getCart();
+        logger.info("Cart: {}", cartDTO);
+        return ResponseUtils.get(cartDTO, HttpStatus.OK);
     }
 
 }

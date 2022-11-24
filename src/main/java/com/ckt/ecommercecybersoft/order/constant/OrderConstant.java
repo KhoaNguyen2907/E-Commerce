@@ -12,6 +12,7 @@ public class OrderConstant {
         public static final String STATUS = "status";
         public static final String TOTAL_COST = "total_cost";
         public static final String TYPE = "type";
+        public static final String PHONE = "phone";
     }
 
     @UtilityClass
