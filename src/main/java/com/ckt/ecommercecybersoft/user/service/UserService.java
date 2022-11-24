@@ -4,8 +4,6 @@ import com.ckt.ecommercecybersoft.common.service.GenericService;
 import com.ckt.ecommercecybersoft.role.dto.RoleDto;
 import com.ckt.ecommercecybersoft.user.dto.UserDto;
 import com.ckt.ecommercecybersoft.user.model.User;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -13,6 +11,7 @@ import java.util.UUID;
 
 /**
  * User service
+ *
  * @author KhoaNguyen
  */
 public interface UserService extends GenericService<User, UserDto, UUID> {
@@ -22,7 +21,6 @@ public interface UserService extends GenericService<User, UserDto, UUID> {
     UserDto updateUser(UserDto userDto);
 
     boolean deleteUser(UUID id);
-
 
     UserDto findByUsername(String username);
 

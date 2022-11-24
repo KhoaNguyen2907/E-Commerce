@@ -8,7 +8,7 @@ spring:
 #    url: jdbc:postgresql://localhost:5432/postgres
 #    username: postgres
 #    password: 1234
-    url: jdbc:postgresql://${RDS_HOSTNAME:localhost}:${RDS_PORT:5432}/${RDS_DB_NAME:postgres}
+    url: jdbc:postgresql://${RDS_HOSTNAME:localhost}:${RDS_PORT:5431}/${RDS_DB_NAME:postgres}
     username: ${RDS_USERNAME:postgres}
     password: ${RDS_PASSWORD:1234}
 

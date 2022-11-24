@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -29,8 +30,9 @@ public class PostController {
     }
 
     @GetMapping(PostUrlUtils.GET_ALL)
-    public ResponseEntity<ResponseDTO> getAllPostDto() {
-        return ResponseUtils.get(postService.findAllDto(PostDTO.class), HttpStatus.OK);
+    public ResponseEntity<ResponseDTO> getAllPostDto(@RequestParam(defaultValue = "5") int pageSize, @RequestParam(defaultValue = "1") int pageNumber) {
+        List<PostDTO> posts = postService.findAllDto(Pageable.ofSize(pageSize).withPage(pageNumber - 1), PostDTO.class);
+        return ResponseUtils.get(posts, HttpStatus.OK);
     }
 
     @GetMapping(PostUrlUtils.GET_ALL_WITH_PAGING)
@@ -46,7 +48,7 @@ public class PostController {
 
     @PostMapping(PostUrlUtils.ADD_POST)
     public ResponseEntity<ResponseDTO> addPost(@RequestBody @Valid PostDTO postDTO) {
-        return ResponseUtils.get(postService.save(postDTO, Post.class), HttpStatus.CREATED);
+        return ResponseUtils.get(postService.addPost(postDTO), HttpStatus.CREATED);
     }
 
     @PutMapping(PostUrlUtils.UPDATE_POST)
