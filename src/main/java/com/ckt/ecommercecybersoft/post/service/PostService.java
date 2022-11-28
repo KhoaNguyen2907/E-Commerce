@@ -32,7 +32,7 @@ class PostServiceImpl implements PostService {
     private UserService userService;
 
     private final PostRepository postRepository;
-    private final UserService userService;
+//    private final UserService userService;
     private final ProjectMapper mapper;
 
     public PostServiceImpl(PostRepository postRepository, ProjectMapper mapper, UserService userService) {

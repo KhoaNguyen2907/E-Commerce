@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@CrossOrigin
+@CrossOrigin(value = "http://localhost:3000", allowCredentials = "true")
 @RequestMapping(value = OrderUrl.URL_ORDER)
 @RestController
 public class OrderResource {
