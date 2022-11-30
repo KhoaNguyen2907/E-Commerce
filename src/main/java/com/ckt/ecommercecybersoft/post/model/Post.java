@@ -1,16 +1,15 @@
 package com.ckt.ecommercecybersoft.post.model;
 
 import com.ckt.ecommercecybersoft.common.entity.BaseEntity;
+import com.ckt.ecommercecybersoft.user.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.Hibernate;
-import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -44,20 +43,20 @@ public class Post extends BaseEntity {
     @JoinColumn(name = PostEntity.UserMappedPost.JOIN_TABLE_USER_ID)
     private User user;
 
-    public void removeComment (Comment comment){
+    public void removeComment(Comment comment) {
         this.comments.remove(comment);
     }
 
-    public void addComment (Comment comment) {
+    public void addComment(Comment comment) {
         this.comments.add(comment);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if(this == obj){
+        if (this == obj) {
             return true;
         }
-        if(obj == null || Hibernate.getClass(this) != Hibernate.getClass(obj)) {
+        if (obj == null || Hibernate.getClass(this) != Hibernate.getClass(obj)) {
             return false;
         }
         Post post = (Post) obj;
