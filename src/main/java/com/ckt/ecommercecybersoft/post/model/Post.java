@@ -45,20 +45,20 @@ public class Post extends BaseEntity {
     @JoinColumn(name = PostEntity.UserMappedPost.JOIN_TABLE_USER_ID)
     private User user;
 
-    public void removeComment (Comment comment){
+    public void removeComment(Comment comment) {
         this.comments.remove(comment);
     }
 
-    public void addComment (Comment comment) {
+    public void addComment(Comment comment) {
         this.comments.add(comment);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if(this == obj){
+        if (this == obj) {
             return true;
         }
-        if(obj == null || Hibernate.getClass(this) != Hibernate.getClass(obj)) {
+        if (obj == null || Hibernate.getClass(this) != Hibernate.getClass(obj)) {
             return false;
         }
         Post post = (Post) obj;
