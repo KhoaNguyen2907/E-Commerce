@@ -21,11 +21,9 @@ import com.ckt.ecommercecybersoft.user.utils.MailUtils;
 import com.ckt.ecommercecybersoft.user.utils.UserExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -46,7 +44,10 @@ import java.util.stream.Collectors;
 @Transactional
 public class UserServiceImpl implements UserService, Serializable {
 
-    private Logger logger = LoggerFactory.getLogger(UserController.class);
+    private Logger logger =LoggerFactory.getLogger(UserController.class);
+
+    @Autowired
+    UserCaching userCaching;
 
     private final UserRepository userRepository;
     private final ProjectMapper mapper;
@@ -106,12 +107,6 @@ public class UserServiceImpl implements UserService, Serializable {
      * User can update their information except for their username, role and email.
      */
     @Override
-    @Caching(
-            put = {
-                    @CachePut(value = "users", key = "#userDto.id"),
-                    @CachePut(value = "users", key = "#userDto.username")
-            }
-    )
     public UserDto updateUser(UserDto userDto) {
         User newUser = getMapper().map(userDto, User.class);
         User updateUser = userRepository.findById(userDto.getId()).orElseThrow(() -> new NotFoundException(UserExceptionUtils.USER_NOT_FOUND));
@@ -119,16 +114,19 @@ public class UserServiceImpl implements UserService, Serializable {
         updateUser.setName(newUser.getName());
         updateUser.setEmail(newUser.getEmail());
         updateUser.setAddress(newUser.getAddress());
+        userRepository.flush();
+        userCaching.updateUserCache(updateUser);
         return getMapper().map(newUser, UserDto.class);
     }
 
     @Override
-    @CacheEvict(value = "users", key = "#id")
     public boolean deleteUser(UUID id) {
         User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException(UserExceptionUtils.USER_NOT_FOUND));
         user.setStatus(User.Status.PERMANENTLY_BLOCKED);
         userRepository.save(user);
-        removeCache(user.getUsername());
+        userRepository.flush();
+        //remove user from cache by both id and username
+        userCaching.deleteUserCache(user);
         return true;
     }
 
@@ -140,11 +138,6 @@ public class UserServiceImpl implements UserService, Serializable {
     public UserDto findByUsername(String username) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new NotFoundException(UserExceptionUtils.USER_NOT_FOUND));
         return getMapper().map(user, UserDto.class);
-    }
-
-    //remove cache by username
-    @CacheEvict(value = "users", key = "#username")
-    public void removeCache(String username) {
     }
 
     /**
@@ -190,6 +183,7 @@ public class UserServiceImpl implements UserService, Serializable {
 
         user.setRole(role);
         user = userRepository.save(user);
+        userCaching.deleteUserCache(user);
         return getMapper().map(user, UserDto.class);
     }
 
@@ -199,7 +193,8 @@ public class UserServiceImpl implements UserService, Serializable {
                 .orElseThrow(() -> new NotFoundException(UserExceptionUtils.USER_NOT_FOUND));
         if (passwordEncoder.matches(oldPassword, user.getPassword())) {
             user.setPassword(passwordEncoder.encode(newPassword));
-            userRepository.save(user);
+            user = userRepository.save(user);
+            userCaching.deleteUserCache(user);
             return true;
         } else {
             throw new BadRequestException(UserExceptionUtils.INCORRECT_PASSWORD);
@@ -295,7 +290,10 @@ public class UserServiceImpl implements UserService, Serializable {
                 user.setPassword(passwordEncoder.encode(password));
                 user = userRepository.save(user);
                 emailService.sendEmail(user.getEmail(), MailUtils.PASSWORD_RESET_SUBJECT, MailUtils.PASSWORD_RESET_BODY);
-                return getMapper().map(user, UserDto.class);
+                userRepository.flush();
+                UserDto retUserDto = getMapper().map(user, UserDto.class);
+                userCaching.deleteUserCache(user);
+                return retUserDto;
             } else {
                 logger.error("Token has expired");
                 throw new NotFoundException(ExceptionUtils.EXPIRED_TOKEN);
