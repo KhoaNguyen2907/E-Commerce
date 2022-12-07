@@ -65,7 +65,7 @@ class CommentServiceImpl implements CommentService {
         Post post = postService.findById(commentDTO.getPostId()).orElseThrow(() -> new ValidationException("Post id not existed!"));
         post.addComment(comment);
         User user = userService.findById(commentDTO.getUserId()).orElseThrow(() -> new ValidationException("User is not existed!"));
-        user.addComment(comment);
+//        user.addComment(comment);
         postService.save(mapper.map(post, PostDTO.class), Post.class);
         commentRepository.save(comment);
         return commentDTO;
