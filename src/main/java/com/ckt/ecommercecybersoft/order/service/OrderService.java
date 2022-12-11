@@ -68,6 +68,12 @@ class OrderServiceImpl implements OrderService {
 
     public ResponseOrderDTO createOrder(RequestOrderDTO requestOrderDTO) {
         OrderDTO orderDto = mapper.map(requestOrderDTO, OrderDTO.class);
+        List<OrderItemDto> outOfStockList = orderDto.getOrderItems().stream()
+                .filter(orderItemDto -> productService.findProductById(orderItemDto.getProduct().getId()).getStock()  < orderItemDto.getQuantity())
+                .collect(Collectors.toList());
+       if (outOfStockList.size() > 0) {
+            throw new NotFoundException("099 Out of stock");
+        }
 
         UserDto userDto = userService.getCurrentUser().orElse(null);
         //Set user if user is logged in
@@ -97,6 +103,7 @@ class OrderServiceImpl implements OrderService {
 
         //set total price
         long total = orderItemDtos.stream().mapToLong(item -> item.getQuantity() * item.getProduct().getPrice()).sum();
+        System.out.println(total);
         order.setTotalCost(total);
 
         OrderDTO savedOrder = mapper.map(orderRepository.save(order), OrderDTO.class);
@@ -108,6 +115,23 @@ class OrderServiceImpl implements OrderService {
     @Override
     public ResponseOrderDTO updateOrderStatus(UUID id, String status) {
         OrderEntity order = orderRepository.findById(id).orElseThrow(() -> new NotFoundException("099 Order not found"));
+        if (status.equals("DELIVERING")){
+            order.getOrderItems().forEach(orderItem -> {
+                ProductEntity product = orderItem.getProductEntity();
+                if (product.getStock() < orderItem.getQuantity()){
+                    updateOrderStatus(id, "FAILED");
+                    throw new NotFoundException("099 Out of stock");
+                }
+            });
+            List<OrderItem> orderItems = order.getOrderItems();
+            orderItems.forEach(oi -> productService.changeStock(oi.getProductEntity().getId(),-oi.getQuantity()));
+        }
+        if (status.equals("FAILED")){
+            if (order.getStatus().equals(OrderEntity.Status.DELIVERING)) {
+                List<OrderItem> orderItems = order.getOrderItems();
+                orderItems.forEach(oi -> productService.changeStock(oi.getProductEntity().getId(), oi.getQuantity()));
+            }
+        }
         order.setStatus(OrderEntity.Status.valueOf(status));
         OrderDTO savedOrder = mapper.map(orderRepository.save(order), OrderDTO.class);
         return mapper.map(savedOrder, ResponseOrderDTO.class);

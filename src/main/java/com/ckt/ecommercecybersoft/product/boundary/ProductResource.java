@@ -61,7 +61,10 @@ public class ProductResource {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseDTO> deleteProduct(@PathVariable UUID id){
-        productService.deleteById(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        ProductDTO ret = productService.deleteProductById(id);
+        return ResponseUtils.get(
+                ret,
+                HttpStatus.OK
+        );
     }
 }

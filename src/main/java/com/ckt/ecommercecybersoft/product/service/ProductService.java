@@ -2,11 +2,13 @@ package com.ckt.ecommercecybersoft.product.service;
 
 import com.ckt.ecommercecybersoft.brand.model.BrandEntity;
 import com.ckt.ecommercecybersoft.brand.service.BrandService;
+import com.ckt.ecommercecybersoft.cart.repository.CartRepository;
 import com.ckt.ecommercecybersoft.category.model.CategoryEntity;
 import com.ckt.ecommercecybersoft.category.service.CategoryService;
 import com.ckt.ecommercecybersoft.common.exception.NotFoundException;
 import com.ckt.ecommercecybersoft.common.service.GenericService;
 import com.ckt.ecommercecybersoft.common.utils.ProjectMapper;
+import com.ckt.ecommercecybersoft.order.repository.OrderItemRepository;
 import com.ckt.ecommercecybersoft.product.dto.ProductDTO;
 import com.ckt.ecommercecybersoft.product.model.ProductEntity;
 import com.ckt.ecommercecybersoft.product.repository.ProductRepository;
@@ -20,15 +22,19 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.ValidationException;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 public interface ProductService extends GenericService<ProductEntity, ProductDTO, UUID> {
     ProductDTO findProductById(UUID id);
     ProductDTO createProduct(ProductDTO productDTO);
-
     ProductDTO updateProduct(ProductDTO productDTO, UUID id);
+
+    ProductDTO deleteProductById(UUID id);
+
+    ProductDTO changeStock(UUID id, int quantity);
+
+    boolean isOutOfStock(UUID id, int quantity);
 }
 
 @Service
@@ -37,17 +43,22 @@ class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final BrandService brandService;
     private final CategoryService categoryService;
+    private final CartRepository cartRepository;
+    private final OrderItemRepository orderItemRepository;
     private final ProjectMapper mapper;
 
     private final MessageSource messageSource;
 
-    public ProductServiceImpl(ProductRepository productRepository,
-                              BrandService brandService, CategoryService categoryService, ProjectMapper mapper, MessageSource messageSource) {
+    public ProductServiceImpl(ProductRepository productRepository, CartRepository cartRepository,
+                              BrandService brandService, CategoryService categoryService,
+                              OrderItemRepository orderItemRepository, ProjectMapper mapper, MessageSource messageSource) {
         this.productRepository = productRepository;
         this.brandService = brandService;
         this.categoryService = categoryService;
         this.mapper = mapper;
         this.messageSource = messageSource;
+        this.cartRepository = cartRepository;
+        this.orderItemRepository = orderItemRepository;
     }
 
     @Override
@@ -120,14 +131,27 @@ class ProductServiceImpl implements ProductService {
         return mapper.map(productRepository.save(curentProduct), ProductDTO.class);
     }
 
-    @Override
     @CacheEvict(value = "product", key = "#id")
-    public void deleteById(UUID id) {
-        ProductEntity productEntity = productRepository.findById(id).orElse(null);
-        productRepository.findById(id).stream().forEach(product -> {
-            product.removeCategory();
-        });
-        ProductService.super.deleteById(id);
+    public ProductDTO deleteProductById(UUID id) {
+        ProductEntity productEntity = productRepository.findById(id).orElseThrow(() -> new NotFoundException("099 Product Not Found"));
+        productEntity.setStock(0);
+        productEntity = productRepository.save(productEntity);
+        return mapper.map(productEntity,ProductDTO.class);
+    }
+
+    @Override
+    public ProductDTO changeStock(UUID id, int quantity) {
+       ProductEntity product = productRepository.findById(id).orElseThrow(() -> new NotFoundException("099 Product not found"));
+
+       product.setStock(product.getStock() + quantity);
+        System.out.println("Set stock to " +product.getStock());
+       return mapper.map(product,ProductDTO.class);
+    }
+
+    @Override
+    public boolean isOutOfStock(UUID id, int quantity) {
+        ProductEntity product = productRepository.findById(id).orElseThrow(() -> new NotFoundException("099 Product not found"));
+        return product.getStock() < quantity;
     }
 
     @Override
