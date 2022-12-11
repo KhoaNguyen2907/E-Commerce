@@ -74,7 +74,7 @@ class OrderServiceImpl implements OrderService {
         orderDto.setUser(userDto);
 
         //set status
-        orderDto.setStatus(OrderEntity.Status.DELIVERING);
+        orderDto.setStatus(OrderEntity.Status.PENDING);
 
         OrderEntity order = mapper.map(orderDto, OrderEntity.class);
         order.getOrderItems().clear();

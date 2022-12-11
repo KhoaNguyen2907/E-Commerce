@@ -165,6 +165,7 @@ public class UserServiceImpl implements UserService, Serializable {
                     .orElseThrow(() -> new NotFoundException(UserExceptionUtils.USER_NOT_FOUND));
             user.setEmailVerified(true);
             userRepository.save(user);
+            userCaching.deleteUserCache(user);
             return true;
         }
         return false;
