@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 public interface OrderService extends
         GenericService<OrderEntity, OrderDTO, UUID> {
     public ResponseOrderDTO createOrder(RequestOrderDTO requestOrderDTO);
+    public ResponseOrderDTO updateOrderStatus(UUID id, String status);
 
 }
 
@@ -73,7 +74,7 @@ class OrderServiceImpl implements OrderService {
         orderDto.setUser(userDto);
 
         //set status
-        orderDto.setStatus(OrderEntity.Status.SUCCESS);
+        orderDto.setStatus(OrderEntity.Status.DELIVERING);
 
         OrderEntity order = mapper.map(orderDto, OrderEntity.class);
         order.getOrderItems().clear();
@@ -103,6 +104,15 @@ class OrderServiceImpl implements OrderService {
         return mapper.map(savedOrder, ResponseOrderDTO.class);
 
     }
+
+    @Override
+    public ResponseOrderDTO updateOrderStatus(UUID id, String status) {
+        OrderEntity order = orderRepository.findById(id).orElseThrow(() -> new NotFoundException("099 Order not found"));
+        order.setStatus(OrderEntity.Status.valueOf(status));
+        OrderDTO savedOrder = mapper.map(orderRepository.save(order), OrderDTO.class);
+        return mapper.map(savedOrder, ResponseOrderDTO.class);
+    }
+
 //        AddressDTO addressDTO = requestOrderDTO.getAddress();
 //        UUID addressId = addressDTO.getId();
 //        List<RequestOrderItemDTO> requestOrderItemDTOs =

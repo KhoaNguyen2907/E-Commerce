@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @CrossOrigin(value = "http://localhost:3000", allowCredentials = "true")
@@ -40,12 +41,11 @@ public class OrderResource {
         return ResponseUtils.get(orderService.createOrder(requestOrderDTO), HttpStatus.CREATED);
     }
 
-//    @PutMapping(value = "/{id}")
-//    public ResponseEntity<ResponseDTO> updateOrder(
-//            @RequestBody RequestOrderDTO requestOrderDTO,
-//            @PathVariable UUID id){
-//        return null;
-//    }
+    @PutMapping(value = "/{id}/{status}")
+    public ResponseEntity<ResponseDTO> updateOrder(
+            @PathVariable UUID id, @PathVariable String status) {
+        return ResponseUtils.get(orderService.updateOrderStatus(id, status), HttpStatus.OK);
+    }
 
 //    @DeleteMapping
 //    public ResponseEntity<ResponseDTO> deleteOrder() {
