@@ -20,10 +20,10 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.cart WHERE u.id = ?1")
     Optional<User> findUserWithCartById(UUID id);
 
-    @Query("SELECT u FROM User u LEFT JOIN FETCH u.orders WHERE u.id = ?1")
+    @Query("SELECT u FROM User u LEFT JOIN FETCH u.posts WHERE u.id = ?1")
     Optional<User> findUserWithPostsById(UUID id);
 
-    @Query("SELECT u FROM User u LEFT JOIN FETCH u.posts WHERE u.id = ?1")
+    @Query("SELECT u FROM User u LEFT JOIN FETCH u.orders od  WHERE u.id = ?1" )
     Optional<User> findUserWithOrdersById(UUID id);
 
 

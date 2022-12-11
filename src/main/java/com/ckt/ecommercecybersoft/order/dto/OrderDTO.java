@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,4 +25,5 @@ public class OrderDTO {
     private long totalCost;
     private List<OrderItemDto> orderItems;
     private UserDto user;
+    private LocalDateTime createdAt;
 }

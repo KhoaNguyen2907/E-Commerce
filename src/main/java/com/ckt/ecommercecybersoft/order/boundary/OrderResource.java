@@ -9,6 +9,7 @@ import com.ckt.ecommercecybersoft.order.dto.RequestOrderDTO;
 import com.ckt.ecommercecybersoft.order.dto.ResponseOrderDTO;
 import com.ckt.ecommercecybersoft.order.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +30,7 @@ public class OrderResource {
 
     @GetMapping
     public ResponseEntity<ResponseDTO> getAllOrder() {
-        List<ResponseOrderDTO> responseOrderDTOs = orderService.findAllDto(OrderDTO.class).stream()
+        List<ResponseOrderDTO> responseOrderDTOs = orderService.findAllDto(Sort.by("createdAt").descending(), OrderDTO.class).stream()
                 .map(orderDTO -> mapper.map(orderDTO, ResponseOrderDTO.class))
                 .collect(Collectors.toList());
         return ResponseUtils.get(responseOrderDTOs,HttpStatus.OK);

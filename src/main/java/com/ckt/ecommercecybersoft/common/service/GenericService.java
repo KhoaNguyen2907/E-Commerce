@@ -4,6 +4,7 @@ import com.ckt.ecommercecybersoft.common.entity.BaseEntity;
 import com.ckt.ecommercecybersoft.common.exception.NotFoundException;
 import com.ckt.ecommercecybersoft.common.utils.ProjectMapper;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.lang.reflect.Type;
@@ -25,6 +26,12 @@ public interface GenericService<T extends BaseEntity, D, I> {
 
     default List<D> findAllDto(Class<D> clazz) {
         return getRepository().findAll().stream()
+                .map(model -> getMapper().map(model, clazz))
+                .collect(Collectors.toList());
+    }
+
+    default List<D> findAllDto(Sort sortBy,Class<D> clazz) {
+        return getRepository().findAll(sortBy).stream()
                 .map(model -> getMapper().map(model, clazz))
                 .collect(Collectors.toList());
     }
