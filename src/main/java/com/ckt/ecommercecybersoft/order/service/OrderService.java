@@ -5,6 +5,7 @@ import com.ckt.ecommercecybersoft.cart.service.CartService;
 import com.ckt.ecommercecybersoft.common.exception.NotFoundException;
 import com.ckt.ecommercecybersoft.common.service.GenericService;
 import com.ckt.ecommercecybersoft.common.utils.ProjectMapper;
+import com.ckt.ecommercecybersoft.order.constant.OrderConstant;
 import com.ckt.ecommercecybersoft.order.dto.OrderDTO;
 import com.ckt.ecommercecybersoft.order.dto.OrderItemDto;
 import com.ckt.ecommercecybersoft.order.dto.RequestOrderDTO;
@@ -72,6 +73,8 @@ class OrderServiceImpl implements OrderService {
                 .filter(orderItemDto -> productService.findProductById(orderItemDto.getProduct().getId()).getStock()  < orderItemDto.getQuantity())
                 .collect(Collectors.toList());
        if (outOfStockList.size() > 0) {
+           updateOrderStatus(orderDto.getId(), "FAILED");
+           orderRepository.flush();
             throw new NotFoundException("099 Out of stock");
         }
 
@@ -115,19 +118,20 @@ class OrderServiceImpl implements OrderService {
     @Override
     public ResponseOrderDTO updateOrderStatus(UUID id, String status) {
         OrderEntity order = orderRepository.findById(id).orElseThrow(() -> new NotFoundException("099 Order not found"));
+
         if (status.equals("DELIVERING")){
-            order.getOrderItems().forEach(orderItem -> {
-                ProductEntity product = orderItem.getProductEntity();
-                if (product.getStock() < orderItem.getQuantity()){
-                    updateOrderStatus(id, "FAILED");
-                    throw new NotFoundException("099 Out of stock");
-                }
-            });
             List<OrderItem> orderItems = order.getOrderItems();
-            orderItems.forEach(oi -> productService.changeStock(oi.getProductEntity().getId(),-oi.getQuantity()));
+            List<OrderItem> outOfStockList = orderItems.stream()
+                    .filter(orderItem -> productService.findProductById(orderItem.getProductEntity().getId()).getStock()  < orderItem.getQuantity())
+                    .collect(Collectors.toList());
+            if (!outOfStockList.isEmpty()){
+                status = "FAILED";
+            } else {
+                orderItems.forEach(oi -> productService.changeStock(oi.getProductEntity().getId(), -oi.getQuantity()));
+            }
         }
         if (status.equals("FAILED")){
-            if (order.getStatus().equals(OrderEntity.Status.DELIVERING)) {
+            if (order.getStatus().equals("DELIVERING")) {
                 List<OrderItem> orderItems = order.getOrderItems();
                 orderItems.forEach(oi -> productService.changeStock(oi.getProductEntity().getId(), oi.getQuantity()));
             }

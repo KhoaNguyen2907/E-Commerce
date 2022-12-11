@@ -43,22 +43,14 @@ class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final BrandService brandService;
     private final CategoryService categoryService;
-    private final CartRepository cartRepository;
-    private final OrderItemRepository orderItemRepository;
     private final ProjectMapper mapper;
 
-    private final MessageSource messageSource;
-
-    public ProductServiceImpl(ProductRepository productRepository, CartRepository cartRepository,
-                              BrandService brandService, CategoryService categoryService,
-                              OrderItemRepository orderItemRepository, ProjectMapper mapper, MessageSource messageSource) {
+    public ProductServiceImpl(ProductRepository productRepository, ProjectMapper mapper,
+                              BrandService brandService, CategoryService categoryService) {
         this.productRepository = productRepository;
         this.brandService = brandService;
         this.categoryService = categoryService;
         this.mapper = mapper;
-        this.messageSource = messageSource;
-        this.cartRepository = cartRepository;
-        this.orderItemRepository = orderItemRepository;
     }
 
     @Override
@@ -72,7 +64,7 @@ class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    @Cacheable(value = "product", key = "#id")
+//    @Cacheable(value = "product", key = "#id")
     public ProductDTO findProductById(UUID id) {
         ProductEntity product = productRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(""));
@@ -92,7 +84,7 @@ class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    @CachePut(value = "product", key = "#id")
+//    @CachePut(value = "product", key = "#id")
     public ProductDTO updateProduct(ProductDTO productDTO, UUID id) {
 //        ProductEntity curProductEntity = productRepository.findById(id).orElse(null);
         BrandEntity brandEntity;
@@ -131,7 +123,7 @@ class ProductServiceImpl implements ProductService {
         return mapper.map(productRepository.save(curentProduct), ProductDTO.class);
     }
 
-    @CacheEvict(value = "product", key = "#id")
+//    @CacheEvict(value = "product", key = "#id")
     public ProductDTO deleteProductById(UUID id) {
         ProductEntity productEntity = productRepository.findById(id).orElseThrow(() -> new NotFoundException("099 Product Not Found"));
         productEntity.setStock(0);

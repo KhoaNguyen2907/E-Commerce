@@ -39,13 +39,21 @@ public class OrderResource {
     @PostMapping
     public ResponseEntity<ResponseDTO> createOrder(
             @RequestBody RequestOrderDTO requestOrderDTO) {
-        return ResponseUtils.get(orderService.createOrder(requestOrderDTO), HttpStatus.CREATED);
+        ResponseOrderDTO responseOrderDTO = orderService.createOrder(requestOrderDTO);
+        if (responseOrderDTO.getStatus().equals("FAILED")) {
+            return ResponseUtils.get(responseOrderDTO, HttpStatus.BAD_REQUEST);
+        }
+        return ResponseUtils.get(responseOrderDTO, HttpStatus.CREATED);
     }
 
     @PutMapping(value = "/{id}/{status}")
     public ResponseEntity<ResponseDTO> updateOrder(
             @PathVariable UUID id, @PathVariable String status) {
-        return ResponseUtils.get(orderService.updateOrderStatus(id, status), HttpStatus.OK);
+        ResponseOrderDTO responseOrderDTO = orderService.updateOrderStatus(id, status);
+        if (responseOrderDTO.getStatus().equals("FAILED")) {
+            return ResponseUtils.get(responseOrderDTO, HttpStatus.BAD_REQUEST);
+        }
+        return ResponseUtils.get(responseOrderDTO, HttpStatus.OK);
     }
 
 //    @DeleteMapping
