@@ -146,24 +146,24 @@
                     </excludes>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>com.spotify</groupId>
-                <artifactId>dockerfile-maven-plugin</artifactId>
-                <version>1.4.10</version>
-                <executions>
-                    <execution>
-                        <id>default</id>
-                        <goals>
-                            <goal>build</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <repository>ndkhoalk97/cybersoft-ecommerce-app</repository>
-                    <tag>${project.version}</tag>
-                    <skipDockerInfo>true</skipDockerInfo>
-                </configuration>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>com.spotify</groupId>-->
+<!--                <artifactId>dockerfile-maven-plugin</artifactId>-->
+<!--                <version>1.4.10</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>default</id>-->
+<!--                        <goals>-->
+<!--                            <goal>build</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--                <configuration>-->
+<!--                    <repository>ndkhoalk97/cybersoft-ecommerce-app</repository>-->
+<!--                    <tag>${project.version}</tag>-->
+<!--                    <skipDockerInfo>true</skipDockerInfo>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 
