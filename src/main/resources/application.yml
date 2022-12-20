@@ -5,12 +5,16 @@ fe.host: ${FE_HOST:localhost:8080}
 
 spring:
   datasource:
+    url: "jdbc:postgresql://p.cb7vazxyjbcxndcxv5zd3m4hjy.db.postgresbridge.com/postgres"
+    username: "application"
+    password: "UColNeIxE4qV06o2ncZNcp5T3pWWtWDtAeGGR7zMeDIT5g6kYeVhjsFxBiuSJTxB"
+
 #    url: jdbc:postgresql://localhost:5432/postgres
 #    username: postgres
 #    password: 1234
-    url: jdbc:postgresql://${RDS_HOSTNAME:localhost}:${RDS_PORT:5431}/${RDS_DB_NAME:postgres}
-    username: ${RDS_USERNAME:postgres}
-    password: ${RDS_PASSWORD:1234}
+#    url: jdbc:postgresql://${RDS_HOSTNAME:localhost}:${RDS_PORT:5431}/${RDS_DB_NAME:postgres}
+#    username: ${RDS_USERNAME:postgres}
+#    password: ${RDS_PASSWORD:1234}
   jpa:
     hibernate:
       ddl-auto: update
@@ -48,6 +52,12 @@ spring:
 
   cache:
     type: redis
+#  redis:
+#    host: ${REDIS_HOST:127.0.0.1}
+#    port: ${REDIS_PORT:6378}
+
   redis:
-    host: ${REDIS_HOST:127.0.0.1}
-    port: ${REDIS_PORT:6378}
+    host: ${REDIS_HOST:redis-18455.c8.us-east-1-4.ec2.cloud.redislabs.com}
+    port: ${REDIS_PORT:18455}
+    password: jzJfnw2rcCKPKIcpmQBKRGE08KmlAzRx
+
