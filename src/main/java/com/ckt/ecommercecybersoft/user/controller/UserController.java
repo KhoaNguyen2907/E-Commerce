@@ -39,7 +39,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@CrossOrigin(value = "http://localhost:3000", allowCredentials = "true")
+@CrossOrigin(value = "https://black-adam-web.herokuapp.com/", allowCredentials = "true")
 @RestController
 @RequestMapping(path = UserUrlUtils.USER_API_V1)
 public class UserController {

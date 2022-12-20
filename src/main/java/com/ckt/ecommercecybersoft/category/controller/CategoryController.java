@@ -16,7 +16,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
-@CrossOrigin
+@CrossOrigin(value = "https://black-adam-web.herokuapp.com/", allowCredentials = "true")
 @RestController
 @RequestMapping("/api/category")
 public class CategoryController {

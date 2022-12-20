@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-@CrossOrigin(value = "http://localhost:3000", allowCredentials = "true")
+@CrossOrigin(value = "https://black-adam-web.herokuapp.com/", allowCredentials = "true")
 @RequestMapping(CartUrl.URL_CART)
 @RestController
 public class CartResource {

@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@CrossOrigin(value = "http://localhost:3000", allowCredentials = "true")
+@CrossOrigin(value = "https://black-adam-web.herokuapp.com/", allowCredentials = "true")
 @RequestMapping("/api/v1/auth")
 public class AuthController {
     @Autowired

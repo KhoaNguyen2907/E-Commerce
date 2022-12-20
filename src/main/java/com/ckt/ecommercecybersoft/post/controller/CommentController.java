@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.UUID;
 
-@CrossOrigin
+@CrossOrigin(value = "https://black-adam-web.herokuapp.com/", allowCredentials = "true")
 @RestController
 @RequestMapping(CommentUrlUtils.COMMENT_API_V1)
 public class CommentController {

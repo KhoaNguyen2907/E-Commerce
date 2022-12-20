@@ -15,7 +15,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
-@CrossOrigin(value = "http://localhost:3000", allowCredentials = "true")
+@CrossOrigin(value = "https://black-adam-web.herokuapp.com/", allowCredentials = "true")
 @RestController
 @RequestMapping(UrlUtil.URL_PRODUCT)
 public class ProductResource {

@@ -12,8 +12,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 @EnableCaching
 public class EcommerceCybersoftApplication {
-    @Autowired
-    private RedisTemplate template;
 
     public static void main(String[] args) {
         SpringApplication.run(EcommerceCybersoftApplication.class, args);

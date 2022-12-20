@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-@CrossOrigin
+@CrossOrigin(value = "https://black-adam-web.herokuapp.com/", allowCredentials = "true")
 @RestController
 @RequestMapping(RoleUrlUtils.ROLE_API_V1)
 public class RoleController {

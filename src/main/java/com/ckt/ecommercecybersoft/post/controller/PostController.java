@@ -18,7 +18,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
-@CrossOrigin
+@CrossOrigin(value = "https://black-adam-web.herokuapp.com/", allowCredentials = "true")
 @RestController
 @RequestMapping(PostUrlUtils.POST_API_V1)
 public class PostController {

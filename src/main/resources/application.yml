@@ -1,8 +1,8 @@
 server:
   port: 8080
 
-fe.host: ${FE_HOST:localhost:8080}
-
+#fe.host: ${FE_HOST:localhost:8080}
+fe.host: ${FE_HOST:ecommerce-cybsoft.herokuapp.com}
 spring:
   datasource:
     url: "jdbc:postgresql://p.cb7vazxyjbcxndcxv5zd3m4hjy.db.postgresbridge.com/postgres"
@@ -55,9 +55,14 @@ spring:
 #  redis:
 #    host: ${REDIS_HOST:127.0.0.1}
 #    port: ${REDIS_PORT:6378}
+#  redis:
+#    host: ${REDIS_HOST:redis-18455.c8.us-east-1-4.ec2.cloud.redislabs.com}
+#    port: ${REDIS_PORT:18455}
+#    password: ${REDIS_PASSWORD:jzJfnw2rcCKPKIcpmQBKRGE08KmlAzRx}
 
   redis:
     host: ${REDIS_HOST:redis-18455.c8.us-east-1-4.ec2.cloud.redislabs.com}
     port: ${REDIS_PORT:18455}
-    password: jzJfnw2rcCKPKIcpmQBKRGE08KmlAzRx
+    password: ${REDIS_PASSWORD:jzJfnw2rcCKPKIcpmQBKRGE08KmlAzRx}
+
 
